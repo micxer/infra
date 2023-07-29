@@ -1,0 +1,7 @@
+roles:
+  - src: ironicbadger.bash_aliases
+
+  - src: geerlingguy.docker
+
+collections:
+  - prometheus.prometheus

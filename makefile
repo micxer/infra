@@ -1,6 +1,12 @@
 memoryalpha:
 	ansible-playbook -b run.yaml --limit memoryalpha
 
+reqs:
+	ansible-galaxy install -r requirements.yaml
+
+forcereqs:
+	ansible-galaxy install -r requirements.yaml --force
+
 decrypt:
 	ansible-vault decrypt vars/vault.yaml
 
