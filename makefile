@@ -1,3 +1,6 @@
+memoryalpha:
+	ansible-playbook -b run.yaml --limit memoryalpha
+
 decrypt:
 	ansible-vault decrypt vars/vault.yaml
 

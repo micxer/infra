@@ -1,0 +1,6 @@
+---
+- hosts: memoryalpha
+  vars_files:
+    - 'vars/vault.yaml'
+  roles:
+    - role: geerlingguy.docker
