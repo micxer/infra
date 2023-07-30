@@ -1,0 +1,6 @@
+---
+
+# geerlingguy.docker
+docker_users:
+  - micxer
+  - ansible
