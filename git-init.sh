@@ -9,10 +9,11 @@ then
     rm .git/hooks/pre-commit
 
 cat <<EOT >> .git/hooks/pre-commit
-if ( git show :vars/vault.yaml | grep -q "\$ANSIBLE_VAULT;" ); then
-echo "[38;5;108mVault Encrypted. Safe to commit.[0m"
+if ( git show :vars/vault.yaml | grep -q "\$ANSIBLE_VAULT;" ) || ( git show :memoryalpha.pem | grep -q "\$ANSIBLE_VAULT;" )
+then
+echo "[38;5;108mVault and key encrypted. Safe to commit.[0m"
 else
-echo "[38;5;208mVault not encrypted! Run 'make encrypt' and try again.[0m"
+echo "[38;5;208mVault or key not encrypted! Run 'make encrypt' and try again.[0m"
 exit 1
 fi
 EOT
