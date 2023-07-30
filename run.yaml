@@ -4,3 +4,4 @@
     - 'vars/vault.yaml'
   roles:
     - role: geerlingguy.docker
+    - role: grog.package
