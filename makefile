@@ -1,18 +1,23 @@
 .PHONY: memoryalpha reqs forcereqs decrypt encrypt githook
 
 memoryalpha:
+	@echo "Provisioning memoryalpha..."
+	@export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES && \
 	ansible-playbook -b run.yaml --limit memoryalpha
 
 reqs:
+	@echo "Installing dependencies..."
 	ansible-galaxy install -r requirements.yaml
 
 forcereqs:
 	ansible-galaxy install -r requirements.yaml --force
 
 decrypt:
+	@echo "Decrypting values..."
 	ansible-vault decrypt vars/vault.yaml memoryalpha.pem
 
 encrypt:
+	@echo "Encrypting values..."
 	ansible-vault encrypt vars/vault.yaml memoryalpha.pem
 
 githook:
