@@ -1,3 +1,5 @@
+.PHONY: memoryalpha reqs forcereqs decrypt encrypt githook
+
 memoryalpha:
 	ansible-playbook -b run.yaml --limit memoryalpha
 
