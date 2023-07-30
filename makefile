@@ -13,7 +13,7 @@ decrypt:
 encrypt:
 	ansible-vault encrypt vars/vault.yaml memoryalpha.pem
 
-gitinit:
-	@./git-init.sh
+githook:
+	@scripts/pre-commit.sh
 	@echo "ansible vault pre-commit hook installed"
 	@echo "don't forget to create a .vault-password too"
