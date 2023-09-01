@@ -3,7 +3,7 @@
 memoryalpha:
 	@echo "Provisioning memoryalpha..."
 	@export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES && \
-	ansible-playbook -b run.yaml --limit memoryalpha
+	ansible-playbook -b playbooks/run.yaml --limit memoryalpha
 
 reqs:
 	@echo "Installing dependencies..."
