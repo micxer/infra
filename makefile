@@ -1,4 +1,4 @@
-.PHONY: memoryalpha reqs forcereqs decrypt encrypt githook
+.PHONY: memoryalpha reqs forcereqs decrypt encrypt githook updates
 
 memoryalpha:
 	@echo "Provisioning memoryalpha..."
@@ -24,3 +24,6 @@ githook:
 	@scripts/pre-commit.sh
 	@echo "ansible vault pre-commit hook installed"
 	@echo "don't forget to create a .vault-password too"
+
+updates:
+	ansible-playbook -b playbooks/updates.yaml --limit memoryalpha
