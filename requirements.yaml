@@ -3,5 +3,5 @@ roles:
   - src: grog.package
   - src: geerlingguy.docker
 
-collections:
-  - prometheus.prometheus
+# collections:
+#   - prometheus.prometheus
