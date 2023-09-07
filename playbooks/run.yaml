@@ -3,10 +3,12 @@
   vars_files:
     - '../vars/vault.yaml'
   roles:
-    - role: geerlingguy.docker
-      tags: docker
     - role: grog.package
       tags: packages
+    - role: geerlingguy.docker
+      tags: docker
+    - role: user_mgmt
+      tags: users
     #  Incompatible with Ansible 2.15.2
     # - role: prometheus.prometheus.node_exporter
     #   tags: prom

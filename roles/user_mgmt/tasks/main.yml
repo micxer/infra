@@ -1,0 +1,48 @@
+---
+
+# Get unique list of groups to create on the server
+- name: Create list of groups
+  ansible.builtin.set_fact:
+    groups_as_list: "{{ (groups_as_list|default([]) + item.groups)|map('trim')|sort|unique }}"
+  loop: '{{ users }}'
+  when: item.groups is defined
+  loop_control:
+    label: "groups_as_list: {{ item.groups if item.groups is defined else '' }}"
+
+- name: Create primary groups before adding users to group
+  ansible.builtin.group:
+    name: "{{ item.primarygroup }}"
+    gid: "{{ item.primarygid | default(omit) }}"
+    state: present
+  when: item.primarygroup is defined
+  loop: '{{ users }}'
+  loop_control:
+    label: "primarygroup: {{ item.primarygroup if item.primarygroup is defined else '' }}, primarygid: {{ item.primarygid if item.primarygid is defined else 'default' }}"
+
+- name: Create secondary groups before adding users to group
+  ansible.builtin.group:
+    name: "{{ item }}"
+    state: present
+  when: groups_as_list is defined
+  loop: "{{ groups_as_list }}"
+  loop_control:
+    label: "groups: {{ item }}"
+
+- name: Add users | create users, shell, home dirs
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    uid: "{{ item.uid | default(omit, True) }}"
+    password: "{{ item.password if item.password is defined else '!' }}"
+    update_password: "always"
+    group: "{{ item.primarygroup | default(omit) }}"
+    groups: "{{ item.groups | default(omit) }}"
+    shell: "{{ item.shell if item.shell is defined else default_shell }}"
+    createhome: yes
+    system: "{{ item.system | default(omit) }}"
+    comment: "{{ item.comment if item.comment is defined else '' }}"
+    state: present # intentionally no deletion of users
+    expires: -1 # no expiry
+  when: (item.user_state == 'present' or item.user_state == 'lock')
+  loop: '{{ users }}'
+  loop_control:
+    label: "username: {{ item.username }}, user_state: {{ item.user_state }}, password: {{ 'True' if item.password is defined else 'False' }}, primarygroup: {{ item.primarygroup if item.primarygroup is defined else ''}}, groups: {{ item.groups if item.groups is defined else ''}}"
