@@ -12,4 +12,5 @@
     #  Incompatible with Ansible 2.15.2
     # - role: prometheus.prometheus.node_exporter
     #   tags: prom
-    - role: mrlesmithjr.zfs
+    - role: ironicbadger.bash_aliases
+      tags: bash_aliases
