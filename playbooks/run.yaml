@@ -14,3 +14,5 @@
     #   tags: prom
     - role: ironicbadger.bash_aliases
       tags: bash_aliases
+    - role: mrlesmithjr.zfs
+      tags: zfs

@@ -26,4 +26,91 @@ bash_aliases:
   - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
   - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
 
+# mrlesmithjr.zfs
+zfs_install_update: true
 
+zfs_create_pools: true
+zfs_pools:
+  - name: storage
+    action: create
+    devices:
+      - ata-WDC_WD120EDBZ-11B1HA0_5QGZGB4F
+      - ata-WDC_WD120EDBZ-11B1HA0_5QGZWKGF
+    type: mirror
+    atime: off
+    compression: lz4
+    xattr: sa
+    acltype: posixacl
+    options:
+      - "-o ashift=12"
+      - "-m /mnt/storage"
+    state: present
+
+zfs_create_filesystems: false
+zfs_filesystems: []
+  # - name: nfs
+  #   pool: tank
+  #   atime: off
+  #   # on | off (default) | lzjb | gzip | gzip-1 | gzip-2 | gzip-3 | gzip-4 | gzip-5 | gzip-6 | gzip-7 | gzip-8 | gzip-9 | lz4 | zle
+  #   compression: lz4
+  #   # latency (default) | throughput
+  #   logbias: latency
+  #   # Define an alternate mountpoint
+  #   # mountpoint: /var/lib/docker
+  #   # all (default) | none | metadata
+  #   primarycache: all
+  #   quota: 3G
+  #   # Defines recordsize.. 16K | 32K | 64K | 128K (default) | and etc.
+  #   recordsize: 16K
+  #   sharenfs: on
+  #   # standard (default) | always | disabled    sync: disabled
+  #   # Controls whether the snapshots devices of zvol's are hidden or visible. hidden (default) | visible
+  #   snapdev: visible
+  #   # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
+  #   snapdir: visible
+  #   state: present
+
+  # - name: Shares/Movies
+  #   compression: lz4
+  #   group: nogroup
+  #   mountpoint: /TANK/Shares/Movies
+  #   owner: nobody
+  #   pool: TANK
+  #   quota: none
+  #   sharesmb: true
+  #   smb_options:
+  #     browseable: "yes"
+  #     comment: ""
+  #     create_directory_mask: "0755"
+  #     create_mask: "0777"
+  #     guest_ok: "yes"
+  #     read_only: "no"
+  #     share_name: Movies
+  #     writable: "yes"
+  #   xattr: sa
+  #   acltype: posixacl
+  #   state: present
+  #   #standard (default) | always | disabled
+  #   sync: disabled
+  # - name: encrypted-fs
+  #   pool: tank
+  #   state: present
+  #   # The encryption algorithm to use, or just "on" to use the default one picked by ZFS.
+  #   encryption: aes-256-gcm
+  #   # Where to lookup the key on the filesystem.  Prompt is not supported by this role.
+  #   keylocation: "file:///use/local/etc/zfs/keys/tank/encyrpted-fs"
+  #   # passphrase | hex | raw
+  #   keyformat: "hex"
+
+zfs_enable_auto_snapshots: false
+
+# defines global scrub cron job parameters. Only applies when `zfs_enable_monitoring` is set to True.
+zfs_pools_scrub_cron:
+  minute: 42
+  hour: 0
+  day: "15"
+  month: "*"
+  weekday: "*"
+
+zfs_enable_monitoring: false
+zfs_monitoring_scrub_max_age: 8
