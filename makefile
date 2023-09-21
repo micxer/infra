@@ -1,9 +1,14 @@
 .PHONY: memoryalpha reqs forcereqs decrypt encrypt githook updates
 
 memoryalpha:
+ifeq (dry, $(filter dry,$(MAKECMDGOALS)))
+	@echo 'Doing a dry run...'
+else
 	@echo "Provisioning memoryalpha..."
+endif
+	@echo run command
 	@export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES && \
-	ansible-playbook -b playbooks/run.yaml --limit memoryalpha
+	ansible-playbook -b playbooks/run.yaml --limit memoryalpha $(if $(filter dry,$(MAKECMDGOALS)),--check)
 
 reqs:
 	@echo "Installing dependencies..."
@@ -27,3 +32,6 @@ githook:
 
 updates:
 	ansible-playbook -b playbooks/updates.yaml --limit memoryalpha
+
+%:
+	@:
