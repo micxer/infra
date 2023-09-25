@@ -1,5 +1,6 @@
 roles:
   - src: ironicbadger.bash_aliases
+  - src: ironicbadger.docker_compose_generator
   - src: grog.package
   - src: geerlingguy.docker
   - src: mrlesmithjr.zfs

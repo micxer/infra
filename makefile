@@ -1,4 +1,4 @@
-.PHONY: memoryalpha reqs forcereqs decrypt encrypt githook updates
+.PHONY: memoryalpha reqs forcereqs decrypt encrypt githook updates docker-compose
 
 memoryalpha:
 ifeq (dry, $(filter dry,$(MAKECMDGOALS)))
@@ -6,9 +6,11 @@ ifeq (dry, $(filter dry,$(MAKECMDGOALS)))
 else
 	@echo "Provisioning memoryalpha..."
 endif
-	@echo run command
 	@export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES && \
 	ansible-playbook -b playbooks/run.yaml --limit memoryalpha $(if $(filter dry,$(MAKECMDGOALS)),--check)
+
+docker-compose:
+	ansible-playbook -b playbooks/run.yaml --limit memoryalpha --tags docker_compose $(if $(filter dry,$(MAKECMDGOALS)),--check) -v
 
 reqs:
 	@echo "Installing dependencies..."

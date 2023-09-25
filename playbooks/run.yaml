@@ -16,3 +16,7 @@
       tags: bash_aliases
     - role: mrlesmithjr.zfs
       tags: zfs
+    - role: micxer-traefik
+      tags: docker_compose
+    - role: ironicbadger.docker_compose_generator
+      tags: docker_compose

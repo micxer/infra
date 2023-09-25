@@ -1,4 +1,9 @@
 ---
+# generic settings
+main_username: micxer
+main_groupname: "{{ main_username }}"
+main_uid: "1000"
+main_gid: "{{ main_uid }}"
 
 # geerlingguy.docker
 docker_users:
@@ -46,29 +51,21 @@ zfs_pools:
       - "-m /mnt/storage"
     state: present
 
-zfs_create_filesystems: false
-zfs_filesystems: []
-  # - name: nfs
-  #   pool: tank
-  #   atime: off
-  #   # on | off (default) | lzjb | gzip | gzip-1 | gzip-2 | gzip-3 | gzip-4 | gzip-5 | gzip-6 | gzip-7 | gzip-8 | gzip-9 | lz4 | zle
-  #   compression: lz4
-  #   # latency (default) | throughput
-  #   logbias: latency
-  #   # Define an alternate mountpoint
-  #   # mountpoint: /var/lib/docker
-  #   # all (default) | none | metadata
-  #   primarycache: all
-  #   quota: 3G
-  #   # Defines recordsize.. 16K | 32K | 64K | 128K (default) | and etc.
-  #   recordsize: 16K
-  #   sharenfs: on
-  #   # standard (default) | always | disabled    sync: disabled
-  #   # Controls whether the snapshots devices of zvol's are hidden or visible. hidden (default) | visible
-  #   snapdev: visible
-  #   # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
-  #   snapdir: visible
-  #   state: present
+zfs_create_filesystems: true
+zfs_filesystems:
+  - name: traefik
+    pool: storage
+    # latency (default) | throughput
+    logbias: latency
+    # Define an alternate mountpoint
+    # mountpoint: /var/lib/docker
+    # all (default) | none | metadata
+    quota: 256M
+    # Controls whether the snapshots devices of zvol's are hidden or visible. hidden (default) | visible
+    snapdev: hidden
+    # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
+    snapdir: hidden
+    state: present
 
   # - name: Shares/Movies
   #   compression: lz4
@@ -114,3 +111,27 @@ zfs_pools_scrub_cron:
 
 zfs_enable_monitoring: false
 zfs_monitoring_scrub_max_age: 8
+
+# ironicbadger.docker_compose_generator
+appdata_path: /mnt/storage
+local_domain: "home.{{ base_domain }}"
+
+containers:
+  ###
+  - service_name: tr
+    active: true
+    image: traefik
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    extra_hosts:
+      - host.docker.internal:172.17.0.1
+    environment:
+      - 'HOSTINGDE_API_KEY="{{ hostingde_api_key }}"'
+      - 'HOSTINGDE_ZONE_NAME="{{ base_domain }}"'
+    volumes:
+      - "{{ appdata_path }}/traefik:/etc/traefik"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+  ###

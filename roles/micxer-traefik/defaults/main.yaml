@@ -1,0 +1,7 @@
+---
+
+traefik_file_provider: false
+traefik_enable_dashboard: true
+traefik_insecure_transport: false
+traefik_exposed_by_default: false
+traefik_config_path: "{{ appdata_path }}/traefik"
