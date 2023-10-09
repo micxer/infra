@@ -13,7 +13,11 @@ docker_users:
 # grog.package
 package_list:
   - name: vim-tiny
+  - name: vim-runtime
   - name: zsh
+  - name: smartmontools
+  - name: tmux
+  - name: rsync
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
