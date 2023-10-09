@@ -1,4 +1,17 @@
-.PHONY: memoryalpha reqs forcereqs decrypt encrypt githook updates docker-compose
+.PHONY: memoryalpha reqs forcereqs decrypt encrypt githook updates docker-compose help
+
+help:
+	@echo "memoryalpha makefile"
+	@echo "--------------------"
+	@echo "memoryalpha: provision memoryalpha"
+	@echo "  Add dry to start a dry run of the playbook"
+	@echo "reqs: install dependencies"
+	@echo "forcereqs: force install dependencies"
+	@echo "decrypt: decrypt vault"
+	@echo "encrypt: encrypt vault"
+	@echo "githook: install ansible vault pre-commit hook"
+	@echo "updates: update packages on memoryalpha"
+	@echo "docker-compose: create docker-compose file o memoryalpha"
 
 memoryalpha:
 ifeq (dry, $(filter dry,$(MAKECMDGOALS)))
