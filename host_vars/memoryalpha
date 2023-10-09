@@ -122,20 +122,36 @@ local_domain: "home.{{ base_domain }}"
 
 containers:
   ###
-  - service_name: tr
+  - service_name: traefik
     active: true
     image: traefik
+    container_name: tr
     ports:
       - 80:80
       - 443:443
       - 8080:8080
-    extra_hosts:
-      - host.docker.internal:172.17.0.1
-    environment:
-      - 'HOSTINGDE_API_KEY="{{ hostingde_api_key }}"'
-      - 'HOSTINGDE_ZONE_NAME="{{ base_domain }}"'
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.hostingde.acme.dnschallenge=true
+      - --certificatesresolvers.hostingde.acme.dnschallenge.provider=hostingde
+      - "--certificatesresolvers.hostingde.acme.email={{ letsencrypt_email }}"
     volumes:
       - "{{ appdata_path }}/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    environment:
+      HOSTINGDE_API_KEY: "{{ hostingde_api_key }}"
+      HOSTINGDE_ZONE_NAME: "{{ base_domain }}"
     restart: unless-stopped
   ###
+  - service_name: nginxtest
+    active: true
+    image: nginx
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.nginxtest.rule=Host(`test.{{ local_domain }}`)"
+      - traefik.http.routers.nginxtest.entrypoints=websecure
+      - traefik.http.routers.nginxtest.tls.certresolver=hostingde
+    restart: unless-stopped
