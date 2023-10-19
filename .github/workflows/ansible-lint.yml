@@ -10,6 +10,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create file .vault-password
+        run: |
+          #echo "${{ secrets.VAULT_PASSWORD }}" > .vault-password
+          echo "foo" > .vault-password
+          chmod 600 .vault-password
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -19,7 +27,11 @@ jobs:
       - name: Install Ansible Lint
         run: |
           python3 -m pip install --upgrade pip
-          pip3 install ansible-lint
+          pip3 install ansible ansible-lint
+
+      - name: Install Ansible Galaxy roles
+        run: ansible-galaxy install -r requirements.yml
 
       - name: Ansible Lint
-        run: ansible-lint --config .ansible-lint
+        run: |
+          ansible-lint --config .ansible-lint

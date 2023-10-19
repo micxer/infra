@@ -5,3 +5,4 @@ warn_list:
 
 exclude_paths:
     - galaxy_roles
+    - playbooks
