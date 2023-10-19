@@ -1,0 +1,7 @@
+---
+warn_list:
+    - command-instead-of-module
+    - line-too-long
+
+exclude_paths:
+    - galaxy_roles
