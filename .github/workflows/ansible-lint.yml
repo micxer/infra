@@ -24,10 +24,12 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Ansible Lint
+      - name: Install Ansible & Ansible Lint
         run: |
           python3 -m pip install --upgrade pip
           pip3 install ansible ansible-lint
+          pwd
+          ls -ls
 
       - name: Install Ansible Galaxy roles
         run: ansible-galaxy install -r requirements.yml
