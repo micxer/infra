@@ -1,0 +1,10 @@
+{
+    "conventionalCommits.scopes": [
+        "packages",
+        "build-tools",
+        "docker-compose",
+        "config",
+        "role",
+        "fs"
+    ]
+}
