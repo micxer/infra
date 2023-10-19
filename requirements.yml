@@ -1,3 +1,4 @@
+---
 roles:
   - src: ironicbadger.bash_aliases
   - src: micxer.docker_compose_generator
