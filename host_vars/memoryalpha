@@ -35,8 +35,9 @@ bash_aliases:
   - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
   - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
 
-# mrlesmithjr.zfs
+# micxer.zfs
 zfs_install_update: true
+zfs_key_file: "/etc/zfs/storage.key"
 
 zfs_create_pools: true
 zfs_pools:
@@ -53,8 +54,13 @@ zfs_pools:
     options:
       - "-o ashift=12"
       - "-m /mnt/storage"
+      - "-o feature@encryption=enabled"
+      - "-O encryption=aes-256-gcm"
+      - "-O keylocation=file://{{ zfs_key_file }}"
+      - "-O keyformat=passphrase"
     state: present
 
+zfs_autoload_encryption_keys: true
 zfs_create_filesystems: true
 zfs_filesystems:
   - name: traefik

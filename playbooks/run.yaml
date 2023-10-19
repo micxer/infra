@@ -14,7 +14,7 @@
     #   tags: prom
     - role: ironicbadger.bash_aliases
       tags: bash_aliases
-    - role: mrlesmithjr.zfs
+    - role: micxer.zfs
       tags: zfs
     # - role: micxer-traefik
     #   tags: docker_compose
