@@ -1,1 +1,2 @@
-default_shell: /bin/bash
+---
+user_mgmt_default_shell: /bin/bash
