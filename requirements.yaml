@@ -8,5 +8,6 @@ roles:
     src: git+https://github.com/micxer/ansible-role-zfs.git
     version: manage-key-file
 
-# collections:
+collections:
+  - ansible.posix
 #   - prometheus.prometheus
