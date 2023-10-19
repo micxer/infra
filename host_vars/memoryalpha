@@ -40,7 +40,7 @@ zfs_install_update: true
 
 zfs_create_pools: true
 zfs_pools:
-  - name: storage
+  - name: new-storage
     action: create
     devices:
       - ata-WDC_WD120EDBZ-11B1HA0_5QGZGB4F
@@ -58,7 +58,7 @@ zfs_pools:
 zfs_create_filesystems: true
 zfs_filesystems:
   - name: traefik
-    pool: storage
+    pool: new-storage
     # latency (default) | throughput
     logbias: latency
     # Define an alternate mountpoint
