@@ -35,8 +35,9 @@ bash_aliases:
   - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
   - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
 
-# micxer.zfs
+# mrlesmithjr.zfs
 zfs_install_update: true
+ubuntu_apt_repository: http://ubuntu.mirror.lrz.de/ubuntu/
 zfs_key_file: "/etc/zfs/storage.key"
 
 zfs_create_pools: true
