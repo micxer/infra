@@ -4,10 +4,8 @@ roles:
   - src: micxer.docker_compose_generator
   - src: grog.package
   - src: geerlingguy.docker
-  # - src: micxer.zfs
-  - name: micxer.zfs
-    src: git+https://github.com/micxer/ansible-role-zfs.git
-    version: manage-key-file
+  - name: mrlesmithjr.zfs
+    src: git+https://github.com/mrlesmithjr/ansible-zfs.git
 
 collections:
   - ansible.posix
