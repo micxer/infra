@@ -228,6 +228,8 @@ containers:
     active: true
     image: mariadb:10.6
     command:
+      - --datadir=/var/lib/mysql/data
+      - --innodb-log-group-home-dir=/var/lib/mysql/log
       - --transaction-isolation=READ-COMMITTED
       - --log-bin=binlog
       - --binlog-format=MIXED
