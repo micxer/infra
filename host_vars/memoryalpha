@@ -233,15 +233,15 @@ containers:
       - --transaction-isolation=READ-COMMITTED
       - --log-bin=binlog
       - --binlog-format=MIXED
+      - --sync-binlog=0
+      - --skip-innodb-doublewrite
       - --innodb_file_per_table
       - --innodb-log-write-ahead-size=16384
-      - --skip-innodb-doublewrite
       - --innodb-flush-neighbors=0
       - --innodb-use-native-aio=0
       - --innodb-use-atomic-writes=0
       - --innodb-compression-default=0
       - --innodb-flush-log-at-trx-commit=0
-      - --sync-binlog=0
       - --innodb-file-per-table
       - --innodb-io-capacity=1000
       - --innodb-io-capacity-max=2500
