@@ -77,19 +77,16 @@ zfs_filesystems:
     # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
     snapdir: hidden
     state: present
-  # - name: nextcloud
-  #   pool: new-storage
-  #   # latency (default) | throughput
-  #   logbias: latency
-  #   # Define an alternate mountpoint
-  #   # mountpoint: /var/lib/docker
-  #   # all (default) | none | metadata
-  #   quota: 1T
-  #   # Controls whether the snapshots devices of zvol's are hidden or visible. hidden (default) | visible
-  #   snapdev: hidden
-  #   # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
-  #   snapdir: hidden
-  #   state: present
+  - name: nextcloud
+    pool: new-storage
+    # latency (default) | throughput
+    logbias: latency
+    quota: 1T
+    # Controls whether the snapshots devices of zvol's are hidden or visible. hidden (default) | visible
+    snapdev: hidden
+    # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
+    snapdir: hidden
+    state: present
   - name: mariadb
     pool: new-storage
     compression: lz4
