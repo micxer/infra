@@ -343,7 +343,7 @@ containers:
       MYSQL_HOST: mariadb
       NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin_user }}"
       NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
-      NEXTCLOUD_DATA_DIR: "{{ appdata_path }}/nextcloud/data"
+      NEXTCLOUD_DATA_DIR: "/mnt/nextcloud-data"
       NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.{{ local_domain }}"
       SMTP_HOST: "{{ nextcloud_smtp_host }}"
       SMTP_SECURE: tls # tls | ssl | <empty>
@@ -357,6 +357,6 @@ containers:
       PHP_UPLOAD_LIMIT: 512M # 512M is the minimum recommended by Nextcloud
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
-      - "{{ appdata_path }}/nextcloud-data:/var/www/html/data"
+      - "{{ appdata_path }}/nextcloud-data:/mnt/nextcloud-data"
     restart: unless-stopped
   ###
