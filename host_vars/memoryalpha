@@ -165,30 +165,73 @@ zfs_monitoring_scrub_max_age: 8
 appdata_path: /mnt/storage
 local_domain: "home.{{ base_domain }}"
 
+#traefik config
+traefik_file_provider: true
+traefik_config_path: "{{ appdata_path }}/traefik"
+traefik_base_domain: "home.{{ base_domain }}"
+
 containers:
   ###
   - service_name: traefik
     active: true
-    image: traefik
-    container_name: tr
+    image: traefik:2.10
+    container_name: traefik
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
-    command:
-      - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entryPoint.to=websecure
-      - --entrypoints.web.http.redirections.entryPoint.scheme=https
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.hostingde.acme.dnschallenge=true
-      - --certificatesresolvers.hostingde.acme.dnschallenge.provider=hostingde
-      - "--certificatesresolvers.hostingde.acme.email={{ letsencrypt_email }}"
     volumes:
-      - "{{ appdata_path }}/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "{{ appdata_path }}/traefik:/etc/traefik"
+    networks:
+      - proxy
     environment:
       HOSTINGDE_API_KEY: "{{ hostingde_api_key }}"
       HOSTINGDE_ZONE_NAME: "{{ base_domain }}"
+      TZ: Europe/Berlin
+    labels:
+      traefik.enable: "true"
+
+      # # catch all traefik errors
+      # traefik.http.routers.globalerrorpage.rule: hostregexp(`{host:.+}`)
+      # traefik.http.routers.globalerrorpage.tls.certresolver: hostingde
+      # traefik.http.routers.globalerrorpage.entrypoints: websecure
+      # traefik.http.routers.globalerrorpage.service: error-pages-service
+      # traefik.http.routers.globalerrorpage.priority: 1
+
+      # # create a middleware to replace 404 errors by a standard page
+      # traefik.http.middlewares.errorpage.errors.status: 404
+      # traefik.http.middlewares.errorpage.errors.service: error-pages-service
+      # traefik.http.middlewares.errorpage.errors.query: /{status}
+
+      # # create a middleware to redirect to www
+      # traefik.http.middlewares.redirect-to-www.redirectregex.regex: (https|http)://(?:www.)?(.*)
+      # traefik.http.middlewares.redirect-to-www.redirectregex.replacement: https://www.$${2}
+
+      # # create a middleware to redirect to non-www
+      # traefik.http.middlewares.redirect-to-nonwww.redirectregex.regex: (https|http)://(www\.(.*))
+      # traefik.http.middlewares.redirect-to-nonwww.redirectregex.replacement: https://$${3}
+
+      # create a middleware named admin, to request a basic authentification of users
+      # you can generate a user:password pair with this command :
+      # echo $(htpasswd -nb user password) | sed -e s/\\$/\\$\\$/g
+      # traefik.http.middlewares.admin.basicauth.users: admin:HASHED_PASSWORD
+
+      # # create a middleware named securityheaders to automatically set good security headers
+      # traefik.http.middlewares.securityheaders.headers.referrerPolicy: strict-origin-when-cross-origin
+
+      # api secure
+      traefik.http.routers.traefik.rule: Host(`traefik.{{ local_domain }}`)
+      traefik.http.routers.traefik.entrypoints: websecure
+      # traefik.http.routers.traefik.middlewares: securityheaders,admin,error-pages-middleware
+      traefik.http.routers.traefik.service: api@internal
+      # traefik.http.routers.traefik.tls.certresolver: hostingde
+
+      # ping secure
+      # traefik.http.routers.ping.rule: Host(`traefik.{{ local_domain }}`) && PathPrefix(`/ping`)
+      # traefik.http.routers.ping.entrypoints: websecure
+      # traefik.http.routers.ping.middlewares: securityheaders
+      # traefik.http.routers.ping.service: ping@internal
+      # traefik.http.routers.ping.tls.certresolver: hostingde
     restart: unless-stopped
   ###
   # - service_name: nextcloud
@@ -224,36 +267,34 @@ containers:
   #     - "{{ appdata_path }}/nextcloud/data:/var/www/html/data"
   #   restart: unless-stopped
   ###
-  - service_name: mariadb
-    active: true
-    image: mariadb:10.6
-    command:
-      - --datadir=/var/lib/mysql/data
-      - --innodb-log-group-home-dir=/var/lib/mysql/log
-      - --transaction-isolation=READ-COMMITTED
-      - --log-bin=binlog
-      - --binlog-format=MIXED
-      - --sync-binlog=0
-      - --skip-innodb-doublewrite
-      - --innodb_file_per_table
-      - --innodb-log-write-ahead-size=16384
-      - --innodb-flush-neighbors=0
-      - --innodb-use-native-aio=0
-      - --innodb-use-atomic-writes=0
-      - --innodb-compression-default=0
-      - --innodb-flush-log-at-trx-commit=0
-      - --innodb-file-per-table
-      - --innodb-io-capacity=1000
-      - --innodb-io-capacity-max=2500
-    # https://kitcharoenp.github.io/mysql/zfs/mariadb/2021/10/18/zfs-tunning-optimization.html#mysql-tuning-and-optimization-for-zfs
-    ports:
-      - 3306:3306
-    environment:
-      MYSQL_ROOT_PASSWORD: "{{ container_mysql_root_password }}"
-      MYSQL_PASSWORD: "{{ nextcloud_mysql_password }}"
-      MYSQL_DATABASE: nextcloud
-      MYSQL_USER: nextcloud
-    volumes:
-      - "{{ appdata_path }}/mariadb:/var/lib/mysql"
-    restart: unless-stopped
+  # - service_name: mariadb
+  #   active: true
+  #   image: mariadb:10.6
+  #   command:
+  #     - --datadir=/var/lib/mysql/data
+  #     - --innodb-log-group-home-dir=/var/lib/mysql/log
+  #     - --transaction-isolation=READ-COMMITTED
+  #     - --log-bin=binlog
+  #     - --binlog-format=MIXED
+  #     - --sync-binlog=0
+  #     - --skip-innodb-doublewrite
+  #     - --innodb_file_per_table
+  #     - --innodb-log-write-ahead-size=16384
+  #     - --innodb-flush-neighbors=0
+  #     - --innodb-use-native-aio=0
+  #     - --innodb-use-atomic-writes=0
+  #     - --innodb-compression-default=0
+  #     - --innodb-flush-log-at-trx-commit=0
+  #     - --innodb-file-per-table
+  #     - --innodb-io-capacity=1000
+  #     - --innodb-io-capacity-max=2500
+  #     # https://kitcharoenp.github.io/mysql/zfs/mariadb/2021/10/18/zfs-tunning-optimization.html#mysql-tuning-and-optimization-for-zfs
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: "{{ container_mysql_root_password }}"
+  #     MYSQL_PASSWORD: "{{ nextcloud_mysql_password }}"
+  #     MYSQL_DATABASE: nextcloud
+  #     MYSQL_USER: nextcloud
+  #   volumes:
+  #     - "{{ appdata_path }}/mariadb:/var/lib/mysql"
+  #   restart: unless-stopped
   ###

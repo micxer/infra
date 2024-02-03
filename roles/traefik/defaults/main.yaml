@@ -1,0 +1,4 @@
+---
+traefik_file_provider: false
+traefik_config_path: ""
+traefik_base_domain: ""
