@@ -192,11 +192,11 @@ containers:
       traefik.enable: "true"
 
       # # catch all traefik errors
-      # traefik.http.routers.globalerrorpage.rule: hostregexp(`{host:.+}`)
+      traefik.http.routers.globalerrorpage.rule: hostregexp(`{host:.+}`)
+      traefik.http.routers.globalerrorpage.entrypoints: websecure
+      traefik.http.routers.globalerrorpage.service: error-pages-service
       # traefik.http.routers.globalerrorpage.tls.certresolver: hostingde
-      # traefik.http.routers.globalerrorpage.entrypoints: websecure
-      # traefik.http.routers.globalerrorpage.service: error-pages-service
-      # traefik.http.routers.globalerrorpage.priority: 1
+      traefik.http.routers.globalerrorpage.priority: 1
 
       # # create a middleware to replace 404 errors by a standard page
       # traefik.http.middlewares.errorpage.errors.status: 404
@@ -216,23 +216,45 @@ containers:
       # echo $(htpasswd -nb user password) | sed -e s/\\$/\\$\\$/g
       # traefik.http.middlewares.admin.basicauth.users: admin:HASHED_PASSWORD
 
-      # # create a middleware named securityheaders to automatically set good security headers
-      # traefik.http.middlewares.securityheaders.headers.referrerPolicy: strict-origin-when-cross-origin
-
       # api secure
       traefik.http.routers.traefik.rule: Host(`traefik.{{ local_domain }}`)
       traefik.http.routers.traefik.entrypoints: websecure
-      # traefik.http.routers.traefik.middlewares: securityheaders,admin,error-pages-middleware
       traefik.http.routers.traefik.service: api@internal
-      # traefik.http.routers.traefik.tls.certresolver: hostingde
+      traefik.http.routers.traefik.middlewares: "default@file"
+      traefik.http.routers.traefik.tls.options: modern@file
 
       # ping secure
-      # traefik.http.routers.ping.rule: Host(`traefik.{{ local_domain }}`) && PathPrefix(`/ping`)
-      # traefik.http.routers.ping.entrypoints: websecure
-      # traefik.http.routers.ping.middlewares: securityheaders
-      # traefik.http.routers.ping.service: ping@internal
-      # traefik.http.routers.ping.tls.certresolver: hostingde
+      traefik.http.routers.ping.rule: Host(`traefik.{{ local_domain }}`) && PathPrefix(`/ping`)
+      traefik.http.routers.ping.entrypoints: websecure
+      traefik.http.routers.ping.middlewares: "default@file"
+      traefik.http.routers.ping.service: ping@internal
+      traefik.http.routers.ping.tls.options: modern@file
     restart: unless-stopped
+  ###
+  - service_name: error-pages
+    active: true
+    container_name: error-pages
+    image: ghcr.io/tarampampam/error-pages:2.26
+    networks:
+      - proxy
+    environment:
+      TEMPLATE_NAME: matrix # set the error pages template
+    labels:
+      traefik.enable: true
+      # use as "fallback" for any NON-registered services (with priority below normal)
+      traefik.http.routers.error-pages-router.rule: HostRegexp(`{host:.+}`)
+      traefik.http.routers.error-pages-router.priority: 10
+      # should say that all of your services work on https
+      traefik.http.routers.error-pages-router.entrypoints: websecure
+      traefik.http.routers.error-pages-router.middlewares: error-pages-middleware
+      # "errors" middleware settings
+      traefik.http.middlewares.error-pages-middleware.errors.status: 400-599
+      traefik.http.middlewares.error-pages-middleware.errors.service: error-pages-service
+      traefik.http.middlewares.error-pages-middleware.errors.query: /{status}.html
+      # define service properties
+      traefik.http.services.error-pages-service.loadbalancer.server.port: 8080
+    depends_on:
+      - traefik
   ###
   # - service_name: nextcloud
   #   active: true

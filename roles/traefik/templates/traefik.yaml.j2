@@ -36,12 +36,14 @@ ping:
 
 providers:
   docker:
-    endpoint: unix:///var/run/docker.sock
     watch: true
+    network: proxy
+    endpoint: unix:///var/run/docker.sock
     exposedByDefault: false
 {% if traefik_file_provider %}
   file:
     filename: /etc/traefik/config.yaml
+    watch: true
 {% endif %}
 
 api: {}
