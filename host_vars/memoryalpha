@@ -264,79 +264,13 @@ containers:
     depends_on:
       - traefik
   ###
-  # - service_name: nextcloud
-  #   active: true
-  #   image: nextcloud:25-fpm
-  #   devices:
-  #     - /dev/dri:/dev/dri
-  #   depends_on:
-  #     - mysql
-  #   labels:
-  #     - "traefik.http.routers.nc.rule=Host(`nextcloud.{{ local_domain }}`)"
-  #   environment:
-  #     MYSQL_DATABASE: nextcloud
-  #     MYSQL_USER: nextcloud
-  #     MYSQL_PASSWORD: "{{ nextcloud_mysql_password }}"
-  #     MYSQL_HOST: mariadb
-  #     NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin_user }}"
-  #     NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
-  #     NEXTCLOUD_DATA_DIR: "{{ appdata_path }}/nextcloud/data"
-  #     NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.{{ local_domain }}"
-  #     SMTP_HOST: "{{ nextcloud_smtp_host }}"
-  #     SMTP_SECURE: tls # tls | ssl | <empty>
-  #     SMTP_PORT: 587
-  #     SMTP_AUTHTYPE: LOGIN # LOGIN | PLAIN | CRAM-MD5 | <empty>
-  #     SMTP_NAME: "{{ nextcloud_smtp_name }}"
-  #     SMTP_PASSWORD: "{{ nextcloud_smtp_password }}"
-  #     MAIL_FROM_ADDRESS: notify # local-part for the 'from' field in the emails sent by Nextcloud
-  #     MAIL_DOMAIN: "nextcloud.{{ local_domain }}"
-  #     PHP_MEMORY_LIMIT: 512M # 512M is the minimum recommended by Nextcloud
-  #     PHP_UPLOAD_LIMIT: 512M # 512M is the minimum recommended by Nextcloud
-  #   volumes:
-  #     - "{{ appdata_path }}/nextcloud:/var/www/html"
-  #     - "{{ appdata_path }}/nextcloud/data:/var/www/html/data"
-  #   restart: unless-stopped
-  ###
-  # - service_name: mariadb
-  #   active: true
-  #   image: mariadb:10.6
-  #   command:
-  #     - --datadir=/var/lib/mysql/data
-  #     - --innodb-log-group-home-dir=/var/lib/mysql/log
-  #     - --transaction-isolation=READ-COMMITTED
-  #     - --log-bin=binlog
-  #     - --binlog-format=MIXED
-  #     - --sync-binlog=0
-  #     - --skip-innodb-doublewrite
-  #     - --innodb_file_per_table
-  #     - --innodb-log-write-ahead-size=16384
-  #     - --innodb-flush-neighbors=0
-  #     - --innodb-use-native-aio=0
-  #     - --innodb-use-atomic-writes=0
-  #     - --innodb-compression-default=0
-  #     - --innodb-flush-log-at-trx-commit=0
-  #     - --innodb-file-per-table
-  #     - --innodb-io-capacity=1000
-  #     - --innodb-io-capacity-max=2500
-  #     # https://kitcharoenp.github.io/mysql/zfs/mariadb/2021/10/18/zfs-tunning-optimization.html#mysql-tuning-and-optimization-for-zfs
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: "{{ container_mysql_root_password }}"
-  #     MYSQL_PASSWORD: "{{ nextcloud_mysql_password }}"
-  #     MYSQL_DATABASE: nextcloud
-  #     MYSQL_USER: nextcloud
-  #   volumes:
-  #     - "{{ appdata_path }}/mariadb:/var/lib/mysql"
-  #   restart: unless-stopped
-  ###
   - service_name: nextcloud
     active: true
     image: nextcloud:25-fpm
     devices:
       - /dev/dri:/dev/dri
-    depends_on:
-      - mariadb
-    labels:
-      - "traefik.http.routers.nc.rule=Host(`nextcloud.{{ local_domain }}`)"
+    networks:
+      - proxy
     environment:
       MYSQL_DATABASE: nextcloud
       MYSQL_USER: nextcloud
@@ -354,10 +288,49 @@ containers:
       SMTP_PASSWORD: "{{ nextcloud_smtp_password }}"
       MAIL_FROM_ADDRESS: notify # local-part for the 'from' field in the emails sent by Nextcloud
       MAIL_DOMAIN: "nextcloud.{{ local_domain }}"
-      PHP_MEMORY_LIMIT: 512M # 512M is the minimum recommended by Nextcloud
-      PHP_UPLOAD_LIMIT: 512M # 512M is the minimum recommended by Nextcloud
+      PHP_MEMORY_LIMIT: 1024M # 512M is the minimum recommended by Nextcloud
+      PHP_UPLOAD_LIMIT: 1024M # 512M is the minimum recommended by Nextcloud
+    labels:
+      traefik.enable: true
+      traefik.http.routers.nextcloud.rule: Host(`nextcloud.{{ local_domain }}`)
+      traefik.http.routers.nextcloud.entrypoints: websecure
+      traefik.http.routers.nextcloud.middlewares: "default@file"
+      traefik.http.routers.nextcloud.tls.options: modern@file
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
       - "{{ appdata_path }}/nextcloud-data:/mnt/nextcloud-data"
+    depends_on:
+      - mariadb
+    restart: unless-stopped
+  ###
+  - service_name: mariadb
+    active: true
+    image: mariadb:10.6
+    command:
+      - --datadir=/var/lib/mysql/data
+      - --innodb-log-group-home-dir=/var/lib/mysql/log
+      - --transaction-isolation=READ-COMMITTED
+      - --log-bin=binlog
+      - --binlog-format=MIXED
+      - --sync-binlog=0
+      - --skip-innodb-doublewrite
+      - --innodb_file_per_table
+      - --innodb-log-write-ahead-size=16384
+      - --innodb-flush-neighbors=0
+      - --innodb-use-native-aio=0
+      - --innodb-use-atomic-writes=0
+      - --innodb-compression-default=0
+      - --innodb-flush-log-at-trx-commit=0
+      - --innodb-file-per-table
+      - --innodb-io-capacity=1000
+      - --innodb-io-capacity-max=2500
+      # https://kitcharoenp.github.io/mysql/zfs/mariadb/2021/10/18/zfs-tunning-optimization.html#mysql-tuning-and-optimization-for-zfs
+    environment:
+      MYSQL_ROOT_PASSWORD: "{{ container_mysql_root_password }}"
+      MYSQL_PASSWORD: "{{ nextcloud_mysql_password }}"
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+    volumes:
+      - "{{ appdata_path }}/mariadb:/var/lib/mysql"
     restart: unless-stopped
   ###
