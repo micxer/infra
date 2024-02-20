@@ -271,6 +271,7 @@ containers:
       - /dev/dri:/dev/dri
     networks:
       - proxy
+      - nextcloud
     environment:
       MYSQL_DATABASE: nextcloud
       MYSQL_USER: nextcloud
@@ -306,6 +307,8 @@ containers:
   - service_name: mariadb
     active: true
     image: mariadb:10.6
+    networks:
+      - nextcloud
     command:
       - --datadir=/var/lib/mysql/data
       - --innodb-log-group-home-dir=/var/lib/mysql/log
