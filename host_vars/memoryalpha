@@ -190,8 +190,8 @@ containers:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "{{ appdata_path }}/traefik:/etc/traefik"
-    networks:
-      - proxy
+    # networks:
+    #   - proxy
     environment:
       HOSTINGDE_API_KEY: "{{ hostingde_api_key }}"
       HOSTINGDE_ZONE_NAME: "{{ base_domain }}"
@@ -243,8 +243,8 @@ containers:
     active: true
     container_name: error-pages
     image: ghcr.io/tarampampam/error-pages:2.26
-    networks:
-      - proxy
+    # networks:
+    #   - proxy
     environment:
       TEMPLATE_NAME: matrix # set the error pages template
     labels:
@@ -269,9 +269,9 @@ containers:
     image: nextcloud:25
     devices:
       - /dev/dri:/dev/dri
-    networks:
-      - proxy
-      - nextcloud
+    # networks:
+    #   - proxy
+    #   - nextcloud
     environment:
       MYSQL_DATABASE: nextcloud
       MYSQL_USER: nextcloud
@@ -307,8 +307,8 @@ containers:
   - service_name: mariadb
     active: true
     image: mariadb:10.6
-    networks:
-      - nextcloud
+    # networks:
+    #   - nextcloud
     command:
       - --datadir=/var/lib/mysql/data
       - --innodb-log-group-home-dir=/var/lib/mysql/log
