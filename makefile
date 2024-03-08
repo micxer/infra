@@ -14,16 +14,22 @@ help:
 	@echo "docker-compose: create docker-compose file o memoryalpha"
 
 memoryalpha:
-ifeq (dry, $(filter dry,$(MAKECMDGOALS)))
-	@echo 'Doing a dry run...'
-else
-	@echo "Provisioning memoryalpha..."
-endif
+	# run decrypt target
+	@make decrypt
+	ifeq (dry, $(filter dry,$(MAKECMDGOALS)))
+		@echo 'Doing a dry run...'
+	else
+		@echo "Provisioning memoryalpha..."
+	endif
 	@export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES && \
 	ansible-playbook -b playbooks/run.yml --limit memoryalpha $(if $(filter dry,$(MAKECMDGOALS)),--check)
+	git restore vars/vault.yml memoryalpha.pem
 
 docker-compose:
+	# run decrypt target
+	@make decrypt
 	ansible-playbook -b playbooks/run.yml --limit memoryalpha --tags docker_compose $(if $(filter dry,$(MAKECMDGOALS)),--check) -v
+	git restore vars/vault.yml memoryalpha.pem
 
 reqs:
 	@echo "Installing dependencies..."
