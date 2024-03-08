@@ -329,10 +329,10 @@ containers:
       - --innodb-io-capacity-max=2500
       # https://kitcharoenp.github.io/mysql/zfs/mariadb/2021/10/18/zfs-tunning-optimization.html#mysql-tuning-and-optimization-for-zfs
     environment:
-      MYSQL_ROOT_PASSWORD: "{{ container_mysql_root_password }}"
-      MYSQL_PASSWORD: "{{ nextcloud_mysql_password }}"
-      MYSQL_DATABASE: nextcloud
-      MYSQL_USER: nextcloud
+      MARIADB_ROOT_PASSWORD: "{{ container_mysql_root_password }}"
+      MARIADB_DATABASE: nextcloud
+      MARIADB_USER: nextcloud
+      MARIADB_PASSWORD: "{{ nextcloud_mysql_password }}"
     volumes:
       - "{{ appdata_path }}/mariadb:/var/lib/mysql"
     restart: unless-stopped
