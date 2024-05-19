@@ -16,11 +16,10 @@ help:
 
 default_dry := ''
 
-[confirm]
 memoryalpha dry=default_dry: decrypt && encrypt
     echo {{ if dry == "dry" { "Doing a dry run..." } else { "Provisioning memoryalpha..." } }}
     @export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES && \
-    echo ansible-playbook -b playbooks/run.yml --limit memoryalpha {{ if dry == "dry" { " --check" } else { "" } }}
+    ansible-playbook -b playbooks/run.yml --limit memoryalpha -vv {{ if dry == "dry" { " --check" } else { "" } }}
 
 docker-compose: decrypt && encrypt
     ansible-playbook -b playbooks/run.yml --limit memoryalpha --tags docker_compose $(if $(filter dry,$(MAKECMDGOALS)),--check) -v

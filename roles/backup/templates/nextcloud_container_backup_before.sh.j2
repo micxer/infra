@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Set maintenance mode
+echo "Enabling maintenance mode for Nextcloud" | tee -a /tmp/autorestic_backup.log
+if ! docker exec "nextcloud" su -s /bin/bash "www-data" -c "php occ maintenance:mode --on"
+then
+    echo "Failed to enable maintenance mode" | tee -a /tmp/autorestic_backup.log
+    exit 1
+fi
+
+echo "Creating backup of Nextcloud database" | tee -a /tmp/autorestic_backup.log
+# Create backup directory
+if ! mkdir -p "{{ appdata_path }}/nextcloud/db-backup"
+then
+    echo "Failed to create backup directory" | tee -a /tmp/autorestic_backup.log
+    exit 1
+fi
+
+# Create gzipped DB backup
+currentDate=$(date +"%Y%m%d-%H%M%S")
+backupFile="{{ appdata_path }}/nextcloud/db-backup/nextcloud-db-${currentDate}.sql.gz"
+if ! docker exec "mariadb" /usr/bin/mysqldump -u "nextcloud"  -p"{{ nextcloud_mysql_password }}" "nextcloud" | gzip -c > "${backupFile}"
+then
+    echo "Failed to create backup" | tee -a /tmp/autorestic_backup.log
+    exit 1
+fi
+echo "Database backup created" | tee -a /tmp/autorestic_backup.log
+
+# Create ZFS snapshot
+echo "Creating ZFS snapshots of Nextcloud data" | tee -a /tmp/autorestic_backup.log
+/usr/sbin/zfs destroy "{{ zfs_pools[0].name }}/nextcloud@restic" || true
+if ! (/usr/sbin/zfs snapshot "{{ zfs_pools[0].name }}/nextcloud@${currentDate}" && /usr/sbin/zfs snapshot "{{ zfs_pools[0].name }}/nextcloud@restic")
+then
+    echo "Failed to create ZFS snapshots" | tee -a /tmp/autorestic_backup.log
+    exit 1
+fi
+
+# Disable maintenance mode
+echo "Disabling maintenance mode for Nextcloud" | tee -a /tmp/autorestic_backup.log
+if ! docker exec "nextcloud" su -s /bin/bash "www-data" -c "php occ maintenance:mode --off"
+then
+    echo "Failed to disable maintenance mode" | tee -a /tmp/autorestic_backup.log
+    exit 1
+fi
+
+echo "Backup successful" | tee -a /tmp/autorestic_backup.log

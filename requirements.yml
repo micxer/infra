@@ -6,6 +6,7 @@ roles:
   - src: geerlingguy.docker
   - name: mrlesmithjr.zfs
     src: git+https://github.com/mrlesmithjr/ansible-zfs.git
+  - src: dbrennand.autorestic
 
 collections:
   - ansible.posix

@@ -20,3 +20,7 @@
       tags: docker_compose
     - role: micxer.docker_compose_generator
       tags: docker_compose
+    - role: backup
+      tags: backup
+    - role: dbrennand.autorestic
+      tags: backup

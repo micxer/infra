@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Restore restic snapshot
+if ! autorestic restore -l nextcloud --from backblaze --to "{{ appdata_path }}/nextcloud/" latest:"{{ appdata_path }}/nextcloud/.zfs/snapshot/restic"
+then
+    echo "Failed to restore restic snapshot"
+    exit 1
+fi
+
+# Look for first file in folder "{{ appdata_path }}/nextcloud/db-backup/"
+backupFile=$(find "{{ appdata_path }}/nextcloud/db-backup/" -type f -printf "%T@ %p\n" | sort -n | tail -n 1 | awk '{print $2}')
+
+# Restore DB backup
+if ! (gunzip < "$backupFile" | docker exec -i "mariadb" /usr/bin/mysql -u "nextcloud" -p"{{ nextcloud_mysql_password }}" "nextcloud")
+then
+    echo "Failed to restore DB backup"
+    exit 1
+fi
+
+# Remove DB backup and folder
+rm "$backupFile"
+rmdir "{{ appdata_path }}/nextcloud/db-backup"
+
+echo "Restore successful"
+echo
+echo "After activating the nextcloud container, you have to deactivate the maintenance mode manually."
+echo "You can do this by running the following command:"
+echo 'docker exec "nextcloud" su -s /bin/bash "www-data" -c "php occ maintenance:mode --off"'

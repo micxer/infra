@@ -65,7 +65,7 @@ zfs_pools:
 zfs_autoload_encryption_keys: true
 zfs_create_filesystems: true
 zfs_filesystems:
-  - name: traefik
+  - name: traefik # Filesystems for the traefik configuration and Let's Encrypt certificates
     pool: new-storage
     # latency (default) | throughput
     logbias: latency
@@ -82,26 +82,14 @@ zfs_filesystems:
     pool: new-storage
     # latency (default) | throughput
     logbias: latency
-    quota: 1G
-    # Controls whether the snapshots devices of zvol's are hidden or visible. hidden (default) | visible
-    snapdev: hidden
-    # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
-    snapdir: hidden
-    state: present
-  - name: nextcloud-data
-    pool: new-storage
-    # latency (default) | throughput
-    logbias: latency
     quota: 1T
     # Controls whether the snapshots devices of zvol's are hidden or visible. hidden (default) | visible
     snapdev: hidden
     # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
     snapdir: hidden
     state: present
-  - name: mariadb
+  - name: mariadb # One filesystem for the database and one for the logs to enable different settings
     pool: new-storage
-    compression: lz4
-    # atime: off  # allready set on pool level
     quota: 4G
     primarycache: metadata
     snapdev: hidden
@@ -266,7 +254,7 @@ containers:
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:25
+    image: nextcloud:25.0-apache
     devices:
       - /dev/dri:/dev/dri
     # networks:
@@ -279,10 +267,9 @@ containers:
       MYSQL_HOST: mariadb
       NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin_user }}"
       NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
-      NEXTCLOUD_DATA_DIR: "/mnt/nextcloud-data"
       NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.{{ local_domain }}"
       SMTP_HOST: "{{ nextcloud_smtp_host }}"
-      SMTP_SECURE: tls # tls | ssl | <empty>
+      SMTP_SECURE: tls # tls | ssl | <empty>  
       SMTP_PORT: 587
       SMTP_AUTHTYPE: PLAIN # LOGIN | PLAIN | CRAM-MD5 | <empty>
       SMTP_NAME: "{{ nextcloud_smtp_name }}"
@@ -299,7 +286,6 @@ containers:
       traefik.http.routers.nextcloud.tls.options: modern@file
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
-      - "{{ appdata_path }}/nextcloud-data:/mnt/nextcloud-data"
     depends_on:
       - mariadb
     restart: unless-stopped
@@ -337,3 +323,46 @@ containers:
       - "{{ appdata_path }}/mariadb:/var/lib/mysql"
     restart: unless-stopped
   ###
+
+# backup
+backup_script_path: /root/bin
+
+# dbrennand.autorestic
+autorestic_version: 1.8.2
+autorestic_restic_version: 0.16.4
+autorestic_config_file: /root/.autorestic.yml
+autorestic_config:
+  version: 2
+  backends:
+    backblaze:
+      type: s3
+      path: s3.eu-central-003.backblazeb2.com/memoryalpha-restic-backup
+      key: "{{ autorestic_key }}"
+      env:
+        AWS_ACCESS_KEY_ID: "{{ autorestic_AWS_ACCESS_KEY_ID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ autorestic_AWS_SECRET_ACCESS_KEY }}"
+  locations:
+    nextcloud:
+      cron: "15 * * * *"
+      from: "{{ appdata_path }}/nextcloud/.zfs/snapshot/restic"
+      to: backblaze
+      forget: prune
+      hooks:
+        before:
+          - "{{ backup_script_path }}/nextcloud_container_backup_before.sh"
+        success:
+          - "{{ backup_script_path }}/nextcloud_container_backup_success.sh"
+        failure:
+          - echo "Something went wrong"
+      options:
+        forget:
+          keep-daily: 7 # keep 4 last daily snapshots
+          keep-weekly: 8 # keep 1 last weekly snapshots
+          keep-monthly: 12 # keep 12 last monthly snapshots
+          keep-yearly: 7 # keep 7 last yearly snapshots
+          keep-within: '14d' # keep snapshots from the last 14 days
+autorestic_info: true
+autorestic_check: true
+autorestic_cron: true
+autorestic_cron_verbose: true
+autorestic_state: present

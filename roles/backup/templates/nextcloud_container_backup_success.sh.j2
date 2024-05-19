@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Create ZFS snapshot
+echo "Delete ZFS snapshot (@restic) of Nextcloud data" | tee -a /tmp/autorestic_backup.log
+if ! /usr/sbin/zfs destroy "{{ zfs_pools[0].name }}/nextcloud@restic"
+then
+    echo "Failed to delete ZFS snapshot" | tee -a /tmp/autorestic_backup.log
+    exit 1
+fi
+
+echo "ZFS snapshot removed" | tee -a /tmp/autorestic_backup.log
+
+echo "Remove backup of Nextcloud database" | tee -a /tmp/autorestic_backup.log
+if ! rm -r "{{ appdata_path }}/nextcloud/db-backup"
+then
+    echo "Failed to database backup" | tee -a /tmp/autorestic_backup.log
+    exit 1
+fi
