@@ -20,20 +20,12 @@ jobs:
           chmod 600 .vault-password
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Install Ansible & Ansible Lint
-        run: |
-          python3 -m pip install --upgrade pip
-          pip3 install ansible ansible-lint
-          pwd
-          ls -ls
 
       - name: Install Ansible Galaxy roles
         run: ansible-galaxy install -r requirements.yml
 
-      - name: Ansible Lint
-        run: |
-          ansible-lint --config .ansible-lint
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@main
