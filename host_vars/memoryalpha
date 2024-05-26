@@ -170,7 +170,7 @@ containers:
   ###
   - service_name: traefik
     active: true
-    image: traefik:2.10
+    image: traefik:2.11.3
     container_name: traefik
     ports:
       - 80:80
@@ -230,7 +230,7 @@ containers:
   - service_name: error-pages
     active: true
     container_name: error-pages
-    image: ghcr.io/tarampampam/error-pages:2.26
+    image: ghcr.io/tarampampam/error-pages:2.27
     # networks:
     #   - proxy
     environment:
@@ -254,7 +254,7 @@ containers:
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:25.0-apache
+    image: nextcloud:28.0.5-apache
     devices:
       - /dev/dri:/dev/dri
     # networks:
@@ -294,7 +294,7 @@ containers:
   ###
   - service_name: mariadb
     active: true
-    image: mariadb:10.6
+    image: mariadb:11.2
     # networks:
     #   - nextcloud
     command:
