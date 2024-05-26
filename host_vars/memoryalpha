@@ -285,7 +285,9 @@ containers:
       traefik.http.routers.nextcloud.middlewares: "default@file"
       traefik.http.routers.nextcloud.tls.options: modern@file
     volumes:
-      - "{{ appdata_path }}/nextcloud:/var/www/html"
+      - "{{ appdata_path }}/nextcloud/data:/var/www/html/data"
+      - "{{ appdata_path }}/nextcloud/config:/var/www/html/config"
+      - "{{ appdata_path }}/nextcloud/custom_apps:/var/www/html/custom_apps"
     depends_on:
       - mariadb
     restart: unless-stopped
