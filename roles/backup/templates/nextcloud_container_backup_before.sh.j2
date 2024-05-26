@@ -19,7 +19,7 @@ fi
 # Create gzipped DB backup
 currentDate=$(date +"%Y%m%d-%H%M%S")
 backupFile="{{ appdata_path }}/nextcloud/db-backup/nextcloud-db-${currentDate}.sql.gz"
-if ! docker exec "mariadb" /usr/bin/mysqldump -u "root"  -p"{{ container_mysql_root_password }}" "nextcloud" | gzip -c > "${backupFile}"
+if ! docker exec "mariadb" /usr/bin/mysqldump --single-transaction --default-character-set=utf8mb4 -u "root"  -p"{{ container_mysql_root_password }}" "nextcloud" | gzip -c > "${backupFile}"
 then
     echo "Failed to create backup" | tee -a /tmp/autorestic_backup.log
     exit 1
