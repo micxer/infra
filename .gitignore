@@ -56,5 +56,8 @@ Temporary Items
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,ansible
 
+# local gefuddl
+fuddl/
+
 galaxy_roles
 .vault-password
