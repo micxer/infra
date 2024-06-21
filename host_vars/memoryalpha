@@ -110,6 +110,12 @@ zfs_filesystems:
     snapdev: hidden
     snapdir: hidden
     state: present
+  - name: windows-ssd
+    pool: new-storage
+    quota: 250G
+    snapdev: hidden
+    snapdir: hidden
+    state: present
   #   sync: disabled  # maybe one more option to increase performance, see https://kitcharoenp.github.io/mysql/zfs/mariadb/2021/10/18/zfs-tunning-optimization.html
 
   # - name: Shares/Movies
