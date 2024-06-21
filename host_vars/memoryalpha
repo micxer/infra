@@ -33,8 +33,6 @@ bash_aliases:
   - { alias: "dprunesys", command: "docker system prune --all"}
   - { alias: "ctop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock http://quay.io/vektorlab/ctop "}
   - { alias: "sshlist", command: "echo Currently open ssh connections && echo && l ~/.ssh/multiplex/"}
-  - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
-  - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
 
 # mrlesmithjr.zfs
 zfs_install_update: true
