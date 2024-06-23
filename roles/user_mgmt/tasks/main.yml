@@ -38,7 +38,7 @@
     group: "{{ item.primarygroup | default(omit) }}"
     groups: "{{ item.groups | default(omit) }}"
     shell: "{{ item.shell if item.shell is defined else user_mgmt_default_shell }}"
-    createhome: true
+    createhome: "{{ item.createhome | default(true) }}"
     system: "{{ item.system | default(omit) }}"
     comment: "{{ item.comment if item.comment is defined else '' }}"
     state: present # intentionally no deletion of users
