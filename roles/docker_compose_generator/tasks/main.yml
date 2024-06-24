@@ -1,25 +1,4 @@
 ---
-- name: Ensure target directories exist
-  ansible.builtin.file:
-    path: "{{ item.1.target }}"
-    state: directory
-    owner: "{{ item.1.owner }}"
-    group: "{{ item.1.group }}"
-    mode: '0755'
-  with_subelements:
-    - "{{ docker_compose_containers }}"
-    - files
-    - skip_missing: True
-
-- name: Copy service specific files to their respective directories
-  ansible.builtin.copy:
-    src: "{{ item.1.src }}"
-    dest: "{{ item.0.target }}/{{ item.1.dest }}"
-    owner: "{{ item.0.owner }}"
-    group: "{{ item.0.group }}"
-    mode: '0644'
-  loop: "{{ docker_compose_containers | selectattr('files', 'defined') | map(attribute='files') | flatten | subelements('files', skip_missing=True) }}"
-
 - name: Ensure destination for compose file exists
   ansible.builtin.file:
     path: "{{ docker_compose_generator_output_path }}"
@@ -28,12 +7,14 @@
     group: "{{ docker_compose_generator_gid }}"
     mode: "0755"
 
-- name: Write docker-compose file
+- name: Write traeffik docker-compose file
   ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "{{ docker_compose_generator_output_path }}/{{ item | basename | regex_replace('\\.j2$', '') }}"
+    src: "docker-compose-traefik.yml.j2"
+    dest: "{{ docker_compose_generator_output_path }}/docker-compose-traefik.yml"
     owner: "{{ docker_compose_generator_uid }}"
     group: "{{ docker_compose_generator_gid }}"
     mode: "0600"
-  with_fileglob:
-    - ../templates/*.j2
+
+- name: Include nextcloud tasks
+  ansible.builtin.include_tasks: nextcloud.yml
+  when: docker_compose_generator_nextcloud_active
