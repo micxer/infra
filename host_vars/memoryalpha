@@ -28,6 +28,8 @@ bash_aliases:
   - { alias: "dstop", command: "docker stop `docker ps -aq`"}
   - { alias: "drm", command: "docker rm `docker ps -aq`"}
   - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml "}
+  - { alias: "dctr", command: "docker-compose -f docker-compose-traefik.yml -p traefik-stack"}
+  - { alias: "dcnc", command: "docker-compose -f docker-compose-nextcloud.yml -p nextcloud-stack"}
   - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml --remove-orphans "}
   - { alias: "dprune", command: "docker image prune"}
   - { alias: "dprunesys", command: "docker system prune --all"}
@@ -170,165 +172,14 @@ traefik_file_provider: true
 traefik_config_path: "{{ appdata_path }}/traefik"
 traefik_base_domain: "home.{{ base_domain }}"
 
-containers:
-  ###
-  - service_name: traefik
-    active: true
-    image: traefik:2.11.3
-    container_name: traefik
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "{{ appdata_path }}/traefik:/etc/traefik"
-    # networks:
-    #   - proxy
-    environment:
-      HOSTINGDE_API_KEY: "{{ hostingde_api_key }}"
-      HOSTINGDE_ZONE_NAME: "{{ base_domain }}"
-      TZ: Europe/Berlin
-    labels:
-      traefik.enable: "true"
+docker_compose_generator_uid: "{{ docker_uid }}"
+docker_compose_generator_gid: "{{ docker_gid }}"
+docker_compose_generator_output_path: "/home/docker/home-stack"
+docker_compose_generator_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
+docker_compose_generator_nextcloud_user: "{{ nextcloud_uid }}"
+docker_compose_generator_nextcloud_group: "{{ nextcloud_gid }}"
+docker_compose_generator_nextcloud_image: nextcloud:25.0.13-apache
 
-      # # catch all traefik errors
-      traefik.http.routers.globalerrorpage.rule: hostregexp(`{host:.+}`)
-      traefik.http.routers.globalerrorpage.entrypoints: websecure
-      traefik.http.routers.globalerrorpage.service: error-pages-service
-      # traefik.http.routers.globalerrorpage.tls.certresolver: hostingde
-      traefik.http.routers.globalerrorpage.priority: 1
-
-      # # create a middleware to replace 404 errors by a standard page
-      # traefik.http.middlewares.errorpage.errors.status: 404
-      # traefik.http.middlewares.errorpage.errors.service: error-pages-service
-      # traefik.http.middlewares.errorpage.errors.query: /{status}
-
-      # # create a middleware to redirect to www
-      # traefik.http.middlewares.redirect-to-www.redirectregex.regex: (https|http)://(?:www.)?(.*)
-      # traefik.http.middlewares.redirect-to-www.redirectregex.replacement: https://www.$${2}
-
-      # # create a middleware to redirect to non-www
-      # traefik.http.middlewares.redirect-to-nonwww.redirectregex.regex: (https|http)://(www\.(.*))
-      # traefik.http.middlewares.redirect-to-nonwww.redirectregex.replacement: https://$${3}
-
-      # create a middleware named admin, to request a basic authentification of users
-      # you can generate a user:password pair with this command :
-      # echo $(htpasswd -nb user password) | sed -e s/\\$/\\$\\$/g
-      # traefik.http.middlewares.admin.basicauth.users: admin:HASHED_PASSWORD
-
-      # api secure
-      traefik.http.routers.traefik.rule: Host(`traefik.{{ local_domain }}`)
-      traefik.http.routers.traefik.entrypoints: websecure
-      traefik.http.routers.traefik.service: api@internal
-      traefik.http.routers.traefik.middlewares: "default@file"
-      traefik.http.routers.traefik.tls.options: modern@file
-
-      # ping secure
-      traefik.http.routers.ping.rule: Host(`traefik.{{ local_domain }}`) && PathPrefix(`/ping`)
-      traefik.http.routers.ping.entrypoints: websecure
-      traefik.http.routers.ping.middlewares: "default@file"
-      traefik.http.routers.ping.service: ping@internal
-      traefik.http.routers.ping.tls.options: modern@file
-    restart: unless-stopped
-  ###
-  - service_name: error-pages
-    active: true
-    container_name: error-pages
-    image: ghcr.io/tarampampam/error-pages:2.27
-    # networks:
-    #   - proxy
-    environment:
-      TEMPLATE_NAME: matrix # set the error pages template
-    labels:
-      traefik.enable: true
-      # use as "fallback" for any NON-registered services (with priority below normal)
-      traefik.http.routers.error-pages-router.rule: HostRegexp(`{host:.+}`)
-      traefik.http.routers.error-pages-router.priority: 10
-      # should say that all of your services work on https
-      traefik.http.routers.error-pages-router.entrypoints: websecure
-      traefik.http.routers.error-pages-router.middlewares: error-pages-middleware
-      # "errors" middleware settings
-      traefik.http.middlewares.error-pages-middleware.errors.status: 400-599
-      traefik.http.middlewares.error-pages-middleware.errors.service: error-pages-service
-      traefik.http.middlewares.error-pages-middleware.errors.query: /{status}.html
-      # define service properties
-      traefik.http.services.error-pages-service.loadbalancer.server.port: 8080
-    depends_on:
-      - traefik
-  ###
-  - service_name: nextcloud
-    active: true
-    image: nextcloud:28.0.5-apache
-    devices:
-      - /dev/dri:/dev/dri
-    # networks:
-    #   - proxy
-    #   - nextcloud
-    environment:
-      MYSQL_DATABASE: nextcloud
-      MYSQL_USER: nextcloud
-      MYSQL_PASSWORD: "{{ nextcloud_mysql_password }}"
-      MYSQL_HOST: mariadb
-      NEXTCLOUD_ADMIN_USER: "{{ nextcloud_admin_user }}"
-      NEXTCLOUD_ADMIN_PASSWORD: "{{ nextcloud_admin_password }}"
-      NEXTCLOUD_TRUSTED_DOMAINS: "nextcloud.{{ local_domain }}"
-      SMTP_HOST: "{{ nextcloud_smtp_host }}"
-      SMTP_SECURE: tls # tls | ssl | <empty>  
-      SMTP_PORT: 587
-      SMTP_AUTHTYPE: PLAIN # LOGIN | PLAIN | CRAM-MD5 | <empty>
-      SMTP_NAME: "{{ nextcloud_smtp_name }}"
-      SMTP_PASSWORD: "{{ nextcloud_smtp_password }}"
-      MAIL_FROM_ADDRESS: notify # local-part for the 'from' field in the emails sent by Nextcloud
-      MAIL_DOMAIN: "nextcloud.{{ local_domain }}"
-      PHP_MEMORY_LIMIT: 1024M # 512M is the minimum recommended by Nextcloud
-      PHP_UPLOAD_LIMIT: 1024M # 512M is the minimum recommended by Nextcloud
-    labels:
-      traefik.enable: true
-      traefik.http.routers.nextcloud.rule: Host(`nextcloud.{{ local_domain }}`)
-      traefik.http.routers.nextcloud.entrypoints: websecure
-      traefik.http.routers.nextcloud.middlewares: "default@file"
-      traefik.http.routers.nextcloud.tls.options: modern@file
-    volumes:
-      - "{{ appdata_path }}/nextcloud/data:/var/www/html/data"
-      - "{{ appdata_path }}/nextcloud/config:/var/www/html/config"
-      - "{{ appdata_path }}/nextcloud/custom_apps:/var/www/html/custom_apps"
-    depends_on:
-      - mariadb
-    restart: unless-stopped
-  ###
-  - service_name: mariadb
-    active: true
-    image: mariadb:11.2
-    # networks:
-    #   - nextcloud
-    command:
-      - --datadir=/var/lib/mysql/data
-      - --innodb-log-group-home-dir=/var/lib/mysql/log
-      - --transaction-isolation=READ-COMMITTED
-      - --log-bin=binlog
-      - --binlog-format=MIXED
-      - --sync-binlog=0
-      - --skip-innodb-doublewrite
-      - --innodb_file_per_table
-      - --innodb-log-write-ahead-size=16384
-      - --innodb-flush-neighbors=0
-      - --innodb-use-native-aio=0
-      - --innodb-use-atomic-writes=0
-      - --innodb-compression-default=0
-      - --innodb-flush-log-at-trx-commit=0
-      - --innodb-file-per-table
-      - --innodb-io-capacity=1000
-      - --innodb-io-capacity-max=2500
-      # https://kitcharoenp.github.io/mysql/zfs/mariadb/2021/10/18/zfs-tunning-optimization.html#mysql-tuning-and-optimization-for-zfs
-    environment:
-      MARIADB_ROOT_PASSWORD: "{{ container_mysql_root_password }}"
-      MARIADB_DATABASE: nextcloud
-      MARIADB_USER: nextcloud
-      MARIADB_PASSWORD: "{{ nextcloud_mysql_password }}"
-    volumes:
-      - "{{ appdata_path }}/mariadb:/var/lib/mysql"
-    restart: unless-stopped
-  ###
 
 # backup
 backup_script_path: /root/bin
@@ -368,7 +219,7 @@ autorestic_config:
           keep-yearly: 7 # keep 7 last yearly snapshots
           keep-within: '14d' # keep snapshots from the last 14 days
 autorestic_info: true
-autorestic_check: true
+autorestic_check: false  # snapshot directory doesn't exist yet
 autorestic_cron: true
 autorestic_cron_verbose: true
 autorestic_state: present
