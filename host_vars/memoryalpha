@@ -72,6 +72,7 @@ zfs_pools:
 
 zfs_autoload_encryption_keys: true
 zfs_create_filesystems: true
+zfs_manage_filesystem_permissions: true
 zfs_filesystems:
   - name: traefik # Filesystems for the traefik configuration and Let's Encrypt certificates
     pool: new-storage
@@ -88,6 +89,9 @@ zfs_filesystems:
     state: present
   - name: nextcloud
     pool: new-storage
+    owner: "{{ nextcloud_username }}"
+    group: "{{ nextcloud_groupname }}"
+    mountpoint: /mnt/storage/nextcloud
     # latency (default) | throughput
     logbias: latency
     quota: 1T
@@ -98,6 +102,9 @@ zfs_filesystems:
     state: present
   - name: mariadb # One filesystem for the database and one for the logs to enable different settings
     pool: new-storage
+    owner: "node-exp"
+    group: "{{ docker_groupname }}"
+    mountpoint: /mnt/storage/mariadb
     quota: 4G
     primarycache: metadata
     snapdev: hidden
@@ -105,6 +112,9 @@ zfs_filesystems:
     state: present
   - name: mariadb/log
     pool: new-storage
+    owner: "node-exp"
+    group: "{{ docker_groupname }}"
+    mountpoint: /mnt/storage/mariadb/log
     quota: 1G
     recordsize: 128k
     snapdev: hidden
@@ -112,6 +122,9 @@ zfs_filesystems:
     state: present
   - name: mariadb/data
     pool: new-storage
+    owner: "node-exp"
+    group: "{{ docker_groupname }}"
+    mountpoint: /mnt/storage/mariadb/data
     quota: 3G
     logbias: throughput
     recordsize: 16k
