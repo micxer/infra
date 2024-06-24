@@ -4,6 +4,14 @@ main_username: micxer
 main_groupname: "{{ main_username }}"
 main_uid: "1000"
 main_gid: "{{ main_uid }}"
+docker_username: docker
+docker_groupname: docker
+docker_uid: "1003"
+docker_gid: "999"
+nextcloud_username: nextcloud
+nextcloud_groupname: "{{ nextcloud_username }}"
+nextcloud_uid: "1004"
+nextcloud_gid: "{{ nextcloud_uid }}"
 
 # geerlingguy.docker
 docker_users:
