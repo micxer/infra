@@ -8,6 +8,11 @@ services:
       HOSTINGDE_API_KEY: "{{ hostingde_api_key }}"
       HOSTINGDE_ZONE_NAME: "{{ base_domain }}"
       TZ: Europe/Berlin
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     labels:
       traefik.enable: "true"
 

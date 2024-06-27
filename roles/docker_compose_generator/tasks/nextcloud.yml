@@ -1,15 +1,18 @@
 ---
 - name: Ensure nextcloud directories exist
   ansible.builtin.file:
-    path: "{{ docker_compose_generator_nextcloud_base_path }}/{{ item }}"
+    path: "{{ docker_compose_generator_nextcloud_base_path }}/{{ item.name }}"
     state: directory
     owner: "{{ docker_compose_generator_nextcloud_user }}"
     group: "{{ docker_compose_generator_nextcloud_group }}"
-    mode: '0755'
+    mode: "{{ item.mode }}"
   with_items:
-    - custom_apps
-    - data
-    - config
+    - name: custom_apps
+      mode: '0750'
+    - name: data
+      mode: '0770'
+    - name: config
+      mode: '0750'
 
 - name: Copy nextcloud specific files to their respective directories
   ansible.builtin.copy:
@@ -18,8 +21,9 @@
     owner: "{{ docker_compose_generator_nextcloud_user }}"
     group: "{{ docker_compose_generator_nextcloud_group }}"
     mode: "0600"
+    backup: true
   with_fileglob:
-    - ../files/nextcloud/*
+    - nextcloud/*
 
 - name: Write docker-compose file
   ansible.builtin.template:
