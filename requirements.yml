@@ -1,7 +1,6 @@
 ---
 roles:
   - src: ironicbadger.bash_aliases
-  - src: micxer.docker_compose_generator
   - src: grog.package
   - src: geerlingguy.docker
   - name: mrlesmithjr.zfs
