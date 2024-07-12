@@ -184,7 +184,7 @@ zfs_pools_scrub_cron:
 zfs_enable_monitoring: false
 zfs_monitoring_scrub_max_age: 8
 
-# ironicbadger.docker_compose_generator
+# micxer.docker_compose_homestack
 appdata_path: /mnt/storage
 local_domain: "home.{{ base_domain }}"
 

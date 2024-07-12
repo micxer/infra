@@ -18,7 +18,7 @@
       tags: zfs
     - role: traefik
       tags: docker_compose
-    - role: docker_compose_generator
+    - role: micxer.docker_compose_homestack
       tags: docker_compose
     - role: backup
       tags: backup
