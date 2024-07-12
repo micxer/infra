@@ -14,8 +14,10 @@
         force_apt_get: true
         upgrade: true
     - name: Check if a reboot is needed on all servers
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+        get_checksum: false
       register: reboot_required_file
-      ansible.builtin.stat: path=/var/run/reboot-required get_checksum=false
     - name: Reboot the box if kernel updated
       when: reboot_required_file.stat.exists
       ansible.builtin.reboot:
