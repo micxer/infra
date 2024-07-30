@@ -231,7 +231,7 @@ autorestic_config:
         success:
           - "{{ backup_script_path }}/nextcloud_container_backup_success.sh"
         failure:
-          - echo "Something went wrong"
+          - "{{ backup_script_path }}/nextcloud_container_backup_failure.sh"
       options:
         forget:
           keep-daily: 7 # keep 4 last daily snapshots

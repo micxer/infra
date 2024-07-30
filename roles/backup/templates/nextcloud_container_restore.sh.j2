@@ -1,9 +1,15 @@
 #!/bin/bash
 
+# Function to write log messages
+log_message() {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") $1" | tee -a /tmp/autorestic_backup.log
+    curl -d "$1" {{ autorestic_ntfy_topic }}
+}
+
 # Restore restic snapshot
 if ! autorestic restore -l nextcloud --from backblaze --to "{{ appdata_path }}/nextcloud/" latest:"{{ appdata_path }}/nextcloud/.zfs/snapshot/restic"
 then
-    echo "Failed to restore restic snapshot"
+    log_message "Failed to restore restic snapshot"
     exit 1
 fi
 
@@ -13,7 +19,7 @@ backupFile=$(find "{{ appdata_path }}/nextcloud/db-backup/" -type f -printf "%T@
 # Restore DB backup
 if ! (gunzip < "$backupFile" | docker exec -i "mariadb" /usr/bin/mysql -u "root" -p"{{ container_mysql_root_password }}" "nextcloud")
 then
-    echo "Failed to restore DB backup"
+    log_message "Failed to restore DB backup"
     exit 1
 fi
 
@@ -21,7 +27,7 @@ fi
 rm "$backupFile"
 rmdir "{{ appdata_path }}/nextcloud/db-backup"
 
-echo "Restore successful"
+log_message "Restore successful"
 echo
 echo "After activating the nextcloud container, you have to deactivate the maintenance mode manually."
 echo "You can do this by running the following command:"
