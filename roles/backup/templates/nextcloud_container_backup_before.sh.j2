@@ -2,7 +2,7 @@
 
 # Set maintenance mode
 echo "Enabling maintenance mode for Nextcloud" | tee -a /tmp/autorestic_backup.log
-if ! docker exec "nextcloud" su -s /bin/bash "www-data" -c "php occ maintenance:mode --on"
+if ! docker exec -u {{ nextcloud_uid }} nextcloud php occ maintenance:mode --on
 then
     echo "Failed to enable maintenance mode" | tee -a /tmp/autorestic_backup.log
     exit 1
@@ -37,7 +37,7 @@ fi
 
 # Disable maintenance mode
 echo "Disabling maintenance mode for Nextcloud" | tee -a /tmp/autorestic_backup.log
-if ! docker exec "nextcloud" su -s /bin/bash "www-data" -c "php occ maintenance:mode --off"
+if ! docker exec -u {{ nextcloud_uid }} nextcloud php occ maintenance:mode --off
 then
     echo "Failed to disable maintenance mode" | tee -a /tmp/autorestic_backup.log
     exit 1
