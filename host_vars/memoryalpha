@@ -100,31 +100,31 @@ zfs_filesystems:
     # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
     snapdir: hidden
     state: present
-  - name: mariadb # One filesystem for the database and one for the logs to enable different settings
+  - name: nc-db # One filesystem for the database and one for the logs to enable different settings
     pool: new-storage
     owner: "node-exp"
     group: "{{ docker_groupname }}"
-    mountpoint: /mnt/storage/mariadb
+    mountpoint: /mnt/storage/nc-db
     quota: 4G
     primarycache: metadata
     snapdev: hidden
     snapdir: hidden
     state: present
-  - name: mariadb/log
+  - name: nc-db/log
     pool: new-storage
     owner: "node-exp"
     group: "{{ docker_groupname }}"
-    mountpoint: /mnt/storage/mariadb/log
+    mountpoint: /mnt/storage/nc-db/log
     quota: 1G
     recordsize: 128k
     snapdev: hidden
     snapdir: hidden
     state: present
-  - name: mariadb/data
+  - name: nc-db/data
     pool: new-storage
     owner: "node-exp"
     group: "{{ docker_groupname }}"
-    mountpoint: /mnt/storage/mariadb/data
+    mountpoint: /mnt/storage/nc-db/data
     quota: 3G
     logbias: throughput
     recordsize: 16k
