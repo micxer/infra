@@ -33,16 +33,11 @@ bash_aliases:
   - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -o space | sort -k4 --human-numeric-sort" }
   - { alias: "dtail", command: "docker logs -tf --tail='50' "}
-  - { alias: "dstop", command: "docker stop `docker ps -aq`"}
-  - { alias: "drm", command: "docker rm `docker ps -aq`"}
-  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml "}
-  - { alias: "dctr", command: "docker-compose -f docker-compose-traefik.yml -p traefik-stack"}
-  - { alias: "dcnc", command: "docker-compose -f docker-compose-nextcloud.yml -p nextcloud-stack"}
-  - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml --remove-orphans "}
+  - { alias: "dctr", command: "docker-compose -f {{ docker_compose_generator_output_path }}/docker-compose-traefik.yml -p traefik-stack"}
+  - { alias: "dcnc", command: "docker-compose -f {{ docker_compose_generator_output_path }}/docker-compose-nextcloud.yml -p nextcloud-stack"}
   - { alias: "dprune", command: "docker image prune"}
   - { alias: "dprunesys", command: "docker system prune --all"}
-  - { alias: "ctop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock http://quay.io/vektorlab/ctop "}
-  - { alias: "sshlist", command: "echo Currently open ssh connections && echo && l ~/.ssh/multiplex/"}
+  - { alias: "ctop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
 
 # mrlesmithjr.zfs
 zfs_install_update: true
