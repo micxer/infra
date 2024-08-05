@@ -11,6 +11,19 @@ log_message() {
     fi
 }
 
+# check that containers are running
+if ! docker ps | grep -q "nextcloud"
+then
+    log_message "Nextcloud container is not running" default
+    exit 1
+fi
+
+if ! docker ps | grep -q "nc-db"
+then
+    log_message "Nextcloud database container is not running" default
+    exit 1
+fi
+
 # Set maintenance mode
 log_message "Enabling maintenance mode for Nextcloud"
 if ! docker exec -u {{ nextcloud_uid }} nextcloud php occ maintenance:mode --on

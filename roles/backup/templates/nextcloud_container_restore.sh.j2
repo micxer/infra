@@ -6,6 +6,13 @@ log_message() {
     curl -d "$1" {{ autorestic_ntfy_topic }}
 }
 
+# check that containers are running
+if ! docker ps | grep -q "nc-db"
+then
+    log_message "Nextcloud database container is not running" default
+    exit 1
+fi
+
 # Restore restic snapshot
 if ! autorestic restore -l nextcloud --from backblaze --to "{{ appdata_path }}/nextcloud/" latest:"{{ appdata_path }}/nextcloud/.zfs/snapshot/restic"
 then
