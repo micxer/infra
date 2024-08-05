@@ -13,6 +13,12 @@ then
     exit 1
 fi
 
+# check that containers are running
+if ! docker ps | grep -q "nextcloud"
+then
+    docker stop nextcloud && log_message "Stopped nextcloud container" default
+fi
+
 # Restore restic snapshot
 if ! autorestic restore -l nextcloud --from backblaze --to "{{ appdata_path }}/nextcloud/" latest:"{{ appdata_path }}/nextcloud/.zfs/snapshot/restic"
 then
@@ -36,6 +42,12 @@ rmdir "{{ appdata_path }}/nextcloud/db-backup"
 
 log_message "Restore successful"
 echo
-echo "After activating the nextcloud container, you have to deactivate the maintenance mode manually."
-echo "You can do this by running the following command:"
-echo 'docker exec -u {{ nextcloud_uid }} nextcloud php occ maintenance:mode --off'
+echo "Restore successful. To activate the nextcloud container (if it was running before), run the following command:"
+echo "docker start nextcloud"
+echo
+echo "After activating the nextcloud container, you have to deactivate the maintenance mode manually:"
+echo "docker exec -u {{ nextcloud_uid }} nextcloud php occ maintenance:mode --off"
+echo
+echo "If you have restored from scratch, you have to update the .htaccess file manually:"
+echo "docker exec -u {{ nextcloud_uid }} nextcloud php occ maintenance:update:htaccess"
+echo
