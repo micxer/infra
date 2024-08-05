@@ -121,19 +121,19 @@ zfs_filesystems:
     group: "{{ docker_groupname }}"
     mountpoint: /mnt/storage/nc-db/data
     quota: 3G
-    logbias: throughput
+#    logbias: throughput
     recordsize: 16k
     snapdev: hidden
     snapdir: hidden
     state: present
+#   sync: disabled  # maybe one more option to increase performance, see https://kitcharoenp.github.io/mysql/zfs/mariadb/2021/10/18/zfs-tunning-optimization.html
   - name: windows-ssd
     pool: new-storage
     quota: 250G
     snapdev: hidden
     snapdir: hidden
     state: present
-  #   sync: disabled  # maybe one more option to increase performance, see https://kitcharoenp.github.io/mysql/zfs/mariadb/2021/10/18/zfs-tunning-optimization.html
-
+  
   # - name: Shares/Movies
   #   compression: lz4
   #   group: nogroup
