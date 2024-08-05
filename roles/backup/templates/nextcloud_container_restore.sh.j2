@@ -38,4 +38,4 @@ log_message "Restore successful"
 echo
 echo "After activating the nextcloud container, you have to deactivate the maintenance mode manually."
 echo "You can do this by running the following command:"
-echo 'docker exec "nextcloud" su -s /bin/bash "www-data" -c "php occ maintenance:mode --off"'
+echo 'docker exec -u {{ nextcloud_uid }} nextcloud php occ maintenance:mode --off'
