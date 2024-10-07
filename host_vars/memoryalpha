@@ -58,7 +58,7 @@ zfs_pools:
     acltype: posixacl
     options:
       - "-o ashift=12"
-      - "-m /mnt/storage"
+      - "-m {{ appdata_path }}"
       - "-o feature@encryption=enabled"
       - "-O encryption=aes-256-gcm"
       - "-O keylocation=file://{{ zfs_key_file }}"
@@ -74,7 +74,7 @@ zfs_filesystems:
     # latency (default) | throughput
     logbias: latency
     # Define an alternate mountpoint
-    # mountpoint: /var/lib/docker
+    # mountpoint: "{{ appdata_path }}/traefik/"
     # all (default) | none | metadata
     quota: 256M
     # Controls whether the snapshots devices of zvol's are hidden or visible. hidden (default) | visible
@@ -86,7 +86,7 @@ zfs_filesystems:
     pool: new-storage
     owner: "{{ nextcloud_username }}"
     group: "{{ nextcloud_groupname }}"
-    mountpoint: /mnt/storage/nextcloud
+    mountpoint: "{{ appdata_path }}/nextcloud"
     # latency (default) | throughput
     logbias: latency
     quota: 1T
@@ -99,7 +99,7 @@ zfs_filesystems:
     pool: new-storage
     owner: "node-exp"
     group: "{{ docker_groupname }}"
-    mountpoint: /mnt/storage/nc-db
+    mountpoint: "{{ appdata_path }}/nc-db"
     quota: 4G
     primarycache: metadata
     snapdev: hidden
@@ -109,7 +109,7 @@ zfs_filesystems:
     pool: new-storage
     owner: "node-exp"
     group: "{{ docker_groupname }}"
-    mountpoint: /mnt/storage/nc-db/log
+    mountpoint: "{{ appdata_path }}/nc-db/log"
     quota: 1G
     recordsize: 128k
     snapdev: hidden
@@ -119,7 +119,7 @@ zfs_filesystems:
     pool: new-storage
     owner: "node-exp"
     group: "{{ docker_groupname }}"
-    mountpoint: /mnt/storage/nc-db/data
+    mountpoint: "{{ appdata_path }}/nc-db/data"
     quota: 3G
 #    logbias: throughput
     recordsize: 16k
