@@ -39,6 +39,18 @@ bash_aliases:
   - { alias: "dprunesys", command: "docker system prune --all"}
   - { alias: "ctop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
 
+# micxer.docker_compose_homestack
+appdata_path: /mnt/storage
+local_domain: "home.{{ base_domain }}"
+
+docker_compose_generator_uid: "{{ docker_uid }}"
+docker_compose_generator_gid: "{{ docker_gid }}"
+docker_compose_generator_output_path: "/home/docker/home-stack"
+docker_compose_generator_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
+docker_compose_generator_nextcloud_user: "{{ nextcloud_uid }}"
+docker_compose_generator_nextcloud_group: "{{ nextcloud_gid }}"
+docker_compose_generator_nextcloud_image: nextcloud:26.0.13-apache
+
 # mrlesmithjr.zfs
 zfs_install_update: true
 ubuntu_apt_repository: http://ubuntu.mirror.lrz.de/ubuntu/
@@ -179,23 +191,10 @@ zfs_pools_scrub_cron:
 zfs_enable_monitoring: false
 zfs_monitoring_scrub_max_age: 8
 
-# micxer.docker_compose_homestack
-appdata_path: /mnt/storage
-local_domain: "home.{{ base_domain }}"
-
 #traefik config
 traefik_file_provider: true
 traefik_config_path: "{{ appdata_path }}/traefik"
 traefik_base_domain: "home.{{ base_domain }}"
-
-docker_compose_generator_uid: "{{ docker_uid }}"
-docker_compose_generator_gid: "{{ docker_gid }}"
-docker_compose_generator_output_path: "/home/docker/home-stack"
-docker_compose_generator_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
-docker_compose_generator_nextcloud_user: "{{ nextcloud_uid }}"
-docker_compose_generator_nextcloud_group: "{{ nextcloud_gid }}"
-docker_compose_generator_nextcloud_image: nextcloud:25.0.13-apache
-
 
 # backup
 backup_script_path: /root/bin
