@@ -1,14 +1,20 @@
 ---
 roles:
   - src: ironicbadger.bash_aliases
+    version: "1.0.3"
   - src: grog.package
+    version: "v1.4.0"
   - src: geerlingguy.docker
+    version: "7.4.1"
   - name: mrlesmithjr.zfs
     src: git+https://github.com/mrlesmithjr/ansible-zfs.git
   - src: dbrennand.autorestic
+    version: "2.2.0"
   - src: micxer.docker_compose_homestack
     version: "v1.2.7"
 
 collections:
-  - ansible.posix
-#   - prometheus.prometheus
+  - name: ansible.posix
+    version: "1.5.4"
+  - name: prometheus.prometheus
+    version: "0.18.0"
