@@ -7,14 +7,13 @@ log_message() {
 }
 
 # check that containers are running
-if ! docker ps | grep -q "nc-db"
+if ! docker ps --filter name=nc-db | grep -q "nc-db"
 then
     log_message "Nextcloud database container is not running" default
     exit 1
 fi
 
-# check that containers are running
-if ! docker ps | grep -q "nextcloud"
+if ! docker ps --filter name=nextcloud | grep -q "nextcloud"
 then
     docker stop nextcloud && log_message "Stopped nextcloud container" default
 fi
