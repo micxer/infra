@@ -200,8 +200,8 @@ traefik_base_domain: "home.{{ base_domain }}"
 backup_script_path: /root/bin
 
 # dbrennand.autorestic
-autorestic_version: 1.8.2
-autorestic_restic_version: 0.16.4
+autorestic_version: 1.8.3
+autorestic_restic_version: 0.17.1
 autorestic_config_file: /root/.autorestic.yml
 autorestic_config:
   version: 2
