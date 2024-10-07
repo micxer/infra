@@ -16,12 +16,12 @@ help:
 
 default_dry := ''
 
-memoryalpha dry=default_dry: decrypt && encrypt
+memoryalpha dry=default_dry: decrypt-ssh && encrypt-ssh
     echo {{ if dry == "dry" { "Doing a dry run..." } else { "Provisioning memoryalpha..." } }}
     @export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES && \
     ansible-playbook -b playbooks/run.yml --limit memoryalpha -vv {{ if dry == "dry" { " --check" } else { "" } }}
 
-docker-compose: decrypt && encrypt
+docker-compose dry=default_dry: decrypt-ssh && encrypt-ssh
     ansible-playbook -b playbooks/run.yml --limit memoryalpha --tags docker_compose $(if $(filter dry,$(MAKECMDGOALS)),--check) -v
 
 reqs:
@@ -30,6 +30,14 @@ reqs:
 
 forcereqs:
     ansible-galaxy install -r requirements.yml --force
+
+decrypt-ssh:
+    echo "Decrypting values..."
+    ansible-vault decrypt memoryalpha.pem
+
+encrypt-ssh:
+    echo "Encrypting values..."
+    ansible-vault encrypt memoryalpha.pem
 
 decrypt:
     echo "Decrypting values..."
