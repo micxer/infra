@@ -30,8 +30,8 @@ package_list:
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
-  - { alias: "zspace", command: "zfs list -o space" }
-  - { alias: "zsnap", command: "zfs list -o space | sort -k4 --human-numeric-sort" }
+  - { alias: "zsnap", command: "zfs list -t snapshot" }
+  - { alias: "zspace", command: "zfs list -o space | sort -k4 --human-numeric-sort" }
   - { alias: "dtail", command: "docker logs -tf --tail='50' "}
   - { alias: "dctr", command: "docker-compose -f {{ docker_compose_generator_output_path }}/docker-compose-traefik.yml -p traefik-stack"}
   - { alias: "dcnc", command: "docker-compose -f {{ docker_compose_generator_output_path }}/docker-compose-nextcloud.yml -p nextcloud-stack"}
