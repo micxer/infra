@@ -215,7 +215,7 @@ autorestic_config:
         AWS_SECRET_ACCESS_KEY: "{{ autorestic_AWS_SECRET_ACCESS_KEY }}"
   locations:
     nextcloud:
-      cron: "15 * * * *"
+      cron: "15 1 * * *"
       from: "{{ appdata_path }}/nextcloud/.zfs/snapshot/restic"
       to: backblaze
       forget: prune
