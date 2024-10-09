@@ -35,7 +35,7 @@ ping: {}
 providers:
   docker:
     watch: true
-    network: proxy
+    network: traefik-net
     endpoint: unix:///var/run/docker.sock
     exposedByDefault: false
 {% if traefik_file_provider %}
