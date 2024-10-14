@@ -6,8 +6,8 @@ roles:
     version: "v1.4.0"
   - src: geerlingguy.docker
     version: "7.4.1"
-  - name: mrlesmithjr.zfs
-    src: git+https://github.com/mrlesmithjr/ansible-zfs.git
+  - name: micxer.zfs
+    version: "v1.0.1"
   - src: dbrennand.autorestic
     version: "2.2.0"
   - src: micxer.docker_compose_homestack
