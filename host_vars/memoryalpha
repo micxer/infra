@@ -49,7 +49,7 @@ docker_compose_generator_output_path: "/home/docker/home-stack"
 docker_compose_generator_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
 docker_compose_generator_nextcloud_user: "{{ nextcloud_uid }}"
 docker_compose_generator_nextcloud_group: "{{ nextcloud_gid }}"
-docker_compose_generator_nextcloud_image: nextcloud:29.0.7-apache
+docker_compose_generator_nextcloud_image: nextcloud:29.0.9-apache
 
 # mrlesmithjr.zfs
 zfs_install_update: true
