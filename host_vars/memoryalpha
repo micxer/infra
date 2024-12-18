@@ -64,6 +64,7 @@ homestack_nextcloud_user: "{{ nextcloud_username }}"
 homestack_nextcloud_group: "{{ nextcloud_groupname }}"
 homestack_nextcloud_image_version: 29.0.10-apache
 homestack_nextcloud_mysql_path: "{{ appdata_path }}"
+homestack_nextcloud_base_domain: "{{ local_domain }}"
 
 # mrlesmithjr.zfs
 zfs_install_update: true
