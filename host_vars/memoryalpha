@@ -59,7 +59,7 @@ homestack_output_path: "/home/docker/home-stack"
 homestack_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
 homestack_nextcloud_uid: "{{ nextcloud_uid }}"
 homestack_nextcloud_gid: "{{ nextcloud_gid }}"
-homestack_nextcloud_image_version: nextcloud:29.0.9-apache
+homestack_nextcloud_image_version: nextcloud:29.0.10-apache
 homestack_nextcloud_mysql_path: "{{ appdata_path }}"
 
 # mrlesmithjr.zfs
