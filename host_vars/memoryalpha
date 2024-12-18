@@ -47,19 +47,22 @@ local_domain: "home.{{ base_domain }}"
 traefik_file_provider: true
 traefik_config_path: "{{ appdata_path }}/traefik"
 
+homestack_uid: "{{ docker_uid }}"
+homestack_gid: "{{ docker_gid }}"
+
 homestack_traefik_version: 2.11.13
 homestack_traefik_base_domain: "home.{{ base_domain }}"
 homestack_traefik_base_path:
 homestack_error_pages_version:
 homestack_error_pages_theme: 
 
-homestack_uid: "{{ docker_uid }}"
-homestack_gid: "{{ docker_gid }}"
-homestack_output_path: "/home/docker/home-stack"
-homestack_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
 homestack_nextcloud_uid: "{{ nextcloud_uid }}"
 homestack_nextcloud_gid: "{{ nextcloud_gid }}"
-homestack_nextcloud_image_version: nextcloud:29.0.10-apache
+homestack_output_path: "/home/docker/home-stack"
+homestack_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
+homestack_nextcloud_user: "{{ nextcloud_username }}"
+homestack_nextcloud_group: "{{ nextcloud_groupname }}"
+homestack_nextcloud_image_version: 29.0.10-apache
 homestack_nextcloud_mysql_path: "{{ appdata_path }}"
 
 # mrlesmithjr.zfs
