@@ -29,7 +29,7 @@ fi
 backupFile=$(find "{{ appdata_path }}/nextcloud/db-backup/" -type f -printf "%T@ %p\n" | sort -n | tail -n 1 | awk '{print $2}')
 
 # Restore DB backup
-if ! (gunzip < "$backupFile" | docker exec -i "nc-db" /usr/bin/mariadb -u "root" -p"{{ container_mysql_root_password }}" "nextcloud")
+if ! (gunzip < "$backupFile" | docker exec -i "nc-db" /usr/bin/mariadb -u "root" -p"{{ homestack_nextcloud_mysql_root_password }}" "nextcloud")
 then
     log_message "Failed to restore DB backup"
     exit 1
