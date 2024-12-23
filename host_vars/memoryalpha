@@ -50,7 +50,7 @@ traefik_config_path: "{{ appdata_path }}/traefik"
 homestack_uid: "{{ docker_uid }}"
 homestack_gid: "{{ docker_gid }}"
 
-homestack_traefik_version: 2.11.13
+homestack_traefik_version: 2.11.16
 homestack_traefik_base_domain: "home.{{ base_domain }}"
 homestack_traefik_base_path:
 homestack_error_pages_version:
@@ -211,7 +211,7 @@ backup_script_path: /root/bin
 
 # dbrennand.autorestic
 autorestic_version: 1.8.3
-autorestic_restic_version: 0.17.1
+autorestic_restic_version: 0.17.3
 autorestic_config_file: /root/.autorestic.yml
 autorestic_config:
   version: 2
