@@ -1,0 +1,12 @@
+- name: Monitoring | Copy grafana dashboard files
+  ansible.builtin.copy:
+    src: "grafana/{{ item.src }}"
+    dest: "{{ homestack_monitoring_grafana_base_path }}/{{ item.dest }}"
+    owner: "{{ homestack_uid }}"
+    group: "{{ homestack_gid }}"
+    directory_mode: "0750"
+    mode: "0600"
+    backup: true
+  loop:
+    - src: dashboards
+      dest: data/
