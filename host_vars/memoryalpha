@@ -52,10 +52,11 @@ homestack_uid: "{{ docker_uid }}"
 homestack_gid: "{{ docker_gid }}"
 
 homestack_traefik_version: 2.11.16
+homestack_traefik_hostingde_domain: "{{ base_domain }}"
 homestack_traefik_base_domain: "home.{{ base_domain }}"
-homestack_traefik_base_path:
-homestack_error_pages_version:
-homestack_error_pages_theme: 
+homestack_traefik_base_path: "{{ appdata_path }}/traefik"
+homestack_error_pages_version: 2.27
+homestack_error_pages_theme: matrix
 
 homestack_nextcloud_uid: "{{ nextcloud_uid }}"
 homestack_nextcloud_gid: "{{ nextcloud_gid }}"
