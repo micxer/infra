@@ -35,6 +35,7 @@ bash_aliases:
   - { alias: "dtail", command: "docker logs -tf --tail='50' "}
   - { alias: "dctr", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-traefik.yml -p traefik-stack"}
   - { alias: "dcnc", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-nextcloud.yml -p nextcloud-stack"}
+  - { alias: "dcmon", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-monitoring.yml -p monitoring-stack"}
   - { alias: "dprune", command: "docker image prune"}
   - { alias: "dprunesys", command: "docker system prune --all"}
   - { alias: "ctop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
@@ -65,6 +66,11 @@ homestack_nextcloud_group: "{{ nextcloud_groupname }}"
 homestack_nextcloud_image_version: 29.0.10-apache
 homestack_nextcloud_mysql_path: "{{ appdata_path }}"
 homestack_nextcloud_base_domain: "{{ local_domain }}"
+
+homestack_monitoring_base_domain: "home.{{ base_domain }}"
+homestack_monitoring_prometheus_image_version: v2.55.1
+homestack_monitoring_prometheus_base_path: "{{ appdata_path }}/prometheus"
+homestack_monitoring_grafana_base_path: "{{ appdata_path }}/grafana"
 
 # mrlesmithjr.zfs
 zfs_install_update: true
@@ -157,6 +163,20 @@ zfs_filesystems:
   - name: windows-ssd
     pool: new-storage
     quota: 250G
+    snapdev: hidden
+    snapdir: hidden
+    state: present
+  - name: prometheus
+    pool: new-storage
+    logbias: latency
+    quota: 1G
+    snapdev: hidden
+    snapdir: hidden
+    state: present
+  - name: grafana
+    pool: new-storage
+    logbias: latency
+    quota: 1G
     snapdev: hidden
     snapdir: hidden
     state: present
