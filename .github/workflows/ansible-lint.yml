@@ -1,31 +1,28 @@
-name: Ansible Lint
+name: ansible-lint
 on:
   pull_request:
     branches:
       - main
 
 jobs:
-  ansible-lint:
+  build:
+    name: Lint Ansible Playbook
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Create file .vault-password
         run: |
-          #echo "${{ secrets.VAULT_PASSWORD }}" > .vault-password
           echo "foo" > .vault-password
           chmod 600 .vault-password
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Lint Ansible Playbook
+        uses: ansible/ansible-lint@v24
+
+      - name: Upload Sarif file
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          python-version: "3.11"
-
-      - name: Install Ansible Galaxy roles
-        run: ansible-galaxy install -r requirements.yml
-
-      - name: Run ansible-lint
-        uses: ansible/ansible-lint@main
+          sarif_file: ansible-lint.sarif
+        if: always()
