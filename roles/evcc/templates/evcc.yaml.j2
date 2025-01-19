@@ -1,0 +1,88 @@
+# open evcc at http://evcc.local:7070
+network:
+  schema: https
+  host: evcc.{{ homestack_monitoring_base_domain }}
+  port: 7070
+
+log: debug
+levels:
+  cache: error
+
+# unique installation id
+plant: 8cde75b7a447dd119e716ef4906ad37fcdc3fa736ce50d7b11ad4e6f5a254a8e
+
+interval: 30s # control cycle interval
+
+meters:
+- type: template
+  template: kostal-plenticore 
+  id: 71  
+  host: sol  
+  port: 1502  
+  usage: pv  
+  modbus: tcpip  
+  name: pv1
+- type: template
+  template: kostal-plenticore 
+  id: 71  
+  host: sol  
+  port: 1502  
+  usage: battery  
+  modbus: tcpip  
+  name: battery2
+- type: template
+  template: kostal-ksem-inverter 
+  id: 71  
+  host: sol  
+  port: 1502  
+  usage: grid  
+  modbus: tcpip  
+  name: grid3
+
+chargers:
+- type: template
+  template: tinkerforge-warp3 
+  host: warp  
+  port: 1883  
+  topic: warp  
+  timeout: 30s  
+  name: wallbox5
+
+vehicles:
+- type: template
+  template: vw 
+  user: "{{ evcc_vw_user }}"
+  password: "{{ evcc_vw_password }}"
+  vin: "{{ evcc_vw_vin }}"
+  title: ID.3  
+  capacity: 58  
+  timeout: 10s  
+  name: ev4
+
+loadpoints:
+ - title: Fahrradhäuschen
+   charger: wallbox5
+   mode: now
+
+site:
+  title: Zuhause
+  meters:
+    grid: grid3
+    pv:
+    - pv1
+    battery:
+    - battery2
+
+tariffs:
+  currency: EUR # (default EUR)
+  grid:
+    type: fixed
+    price: 0.3602 # EUR/kWh
+  feedin:
+    type: fixed
+    price: 0.082 # EUR/kWh
+  co2:
+    type: template
+    template: grünstromindex
+    zip: 85640
+    token: "{{ evcc_co2_gruenstromindex_token }}"

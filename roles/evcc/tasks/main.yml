@@ -1,0 +1,18 @@
+---
+- name: Copy evcc config file
+  ansible.builtin.template:
+    src: "evcc.yaml.j2"
+    dest: "{{ evcc_base_path }}/evcc.yaml"
+    owner: "{{ homestack_uid }}"
+    group: "{{ homestack_gid }}"
+    mode: "0600"
+    backup: true
+
+- name: Write evcc docker-compose file
+  ansible.builtin.template:
+    src: "docker-compose-evcc.yml.j2"
+    dest: "{{ homestack_output_path }}/docker-compose-evcc.yml"
+    owner: "{{ homestack_uid }}"
+    group: "{{ homestack_gid }}"
+    mode: "0600"
+    backup: true
