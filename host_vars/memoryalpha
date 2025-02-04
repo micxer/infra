@@ -191,6 +191,13 @@ zfs_filesystems:
     snapdev: hidden
     snapdir: hidden
     state: present
+  - name: mosquitto
+    pool: new-storage
+    logbias: latency
+    quota: 1G
+    snapdev: hidden
+    snapdir: hidden
+    state: present
   
   # - name: Shares/Movies
   #   compression: lz4
