@@ -134,7 +134,7 @@ zfs_filesystems:
     owner: "node-exp"
     group: "{{ docker_groupname }}"
     mountpoint: "{{ appdata_path }}/nc-db"
-    quota: 4G
+    quota: 5G
     primarycache: metadata
     snapdev: hidden
     snapdir: hidden
@@ -154,7 +154,7 @@ zfs_filesystems:
     owner: "node-exp"
     group: "{{ docker_groupname }}"
     mountpoint: "{{ appdata_path }}/nc-db/data"
-    quota: 3G
+    quota: 4G
 #    logbias: throughput
     recordsize: 16k
     snapdev: hidden
@@ -170,7 +170,7 @@ zfs_filesystems:
   - name: prometheus
     pool: new-storage
     logbias: latency
-    quota: 1G
+    quota: 4G
     snapdev: hidden
     snapdir: hidden
     state: present
