@@ -9,10 +9,6 @@ profile: production # min, basic, moderate,safety, shared, production
 # Allows dumping of results in SARIF format
 sarif_file: ansible-lint.sarif
 
-warn_list:
-  - command-instead-of-module
-  - line-too-long
-
 # exclude_paths included in this file are parsed relative to this file's location
 # and not relative to the CWD of execution. CLI arguments passed to the --exclude
 # option are parsed relative to the CWD of execution.
