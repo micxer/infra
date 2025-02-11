@@ -19,6 +19,8 @@ entryPoints:
           - main: {{ traefik_base_domain }}
             sans:
               - "*.{{ traefik_base_domain }}"
+  mqtts:
+    address: ":8883"
 
 accesslog:
   format: json
