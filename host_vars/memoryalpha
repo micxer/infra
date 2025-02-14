@@ -41,46 +41,11 @@ bash_aliases:
   - { alias: "dprunesys", command: "docker system prune --all"}
   - { alias: "ctop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
 
-# micxer.docker_compose_homestack
 appdata_path: /mnt/storage
 local_domain: "home.{{ base_domain }}"
 
-#traefik config
 traefik_file_provider: true
 traefik_config_path: "{{ appdata_path }}/traefik"
-
-homestack_uid: "{{ docker_uid }}"
-homestack_gid: "{{ docker_gid }}"
-
-homestack_traefik_version: 2.11.16
-homestack_traefik_hostingde_domain: "{{ base_domain }}"
-homestack_traefik_base_domain: "home.{{ base_domain }}"
-homestack_traefik_base_path: "{{ appdata_path }}/traefik"
-homestack_error_pages_version: 2.27
-homestack_error_pages_theme: matrix
-
-homestack_nextcloud_uid: "{{ nextcloud_uid }}"
-homestack_nextcloud_gid: "{{ nextcloud_gid }}"
-homestack_output_path: "/home/docker/home-stack"
-homestack_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
-homestack_nextcloud_user: "{{ nextcloud_username }}"
-homestack_nextcloud_group: "{{ nextcloud_groupname }}"
-homestack_nextcloud_image_version: 29.0.10-apache
-homestack_nextcloud_mysql_path: "{{ appdata_path }}"
-homestack_nextcloud_base_domain: "{{ local_domain }}"
-
-homestack_monitoring_base_domain: "home.{{ base_domain }}"
-homestack_monitoring_prometheus_image_version: v2.55.1
-homestack_monitoring_prometheus_base_path: "{{ appdata_path }}/prometheus"
-homestack_monitoring_grafana_base_path: "{{ appdata_path }}/grafana"
-
-homestack_ha_base_domain: "home.{{ base_domain }}"
-homestack_ha_mosquitto_base_path: "{{ appdata_path }}/mosquitto"
-
-homestack_ha_evcc_base_path: "{{ appdata_path }}/evcc"
-
-# evcc
-evcc_base_path: "{{ appdata_path }}/evcc"
 
 # mrlesmithjr.zfs
 zfs_install_update: true
@@ -190,24 +155,17 @@ zfs_filesystems:
     snapdev: hidden
     snapdir: hidden
     state: present
-  - name: evcc
-    pool: new-storage
-    logbias: latency
-    quota: 64MB
-    snapdev: hidden
-    snapdir: hidden
-    state: present
   - name: mosquitto
     pool: new-storage
     logbias: latency
-    quota: 1G
+    quota: 512M
     snapdev: hidden
     snapdir: hidden
     state: present
   - name: evcc
     pool: new-storage
     logbias: latency
-    quota: 256M
+    quota: 64M
     snapdev: hidden
     snapdir: hidden
     state: present
@@ -257,8 +215,41 @@ zfs_pools_scrub_cron:
 zfs_enable_monitoring: false
 zfs_monitoring_scrub_max_age: 8
 
-# backup
-backup_script_path: /root/bin
+# micxer.docker_compose_homestack
+homestack_uid: "{{ docker_uid }}"
+homestack_gid: "{{ docker_gid }}"
+
+homestack_traefik_version: 2.11.16
+homestack_traefik_hostingde_domain: "{{ base_domain }}"
+homestack_traefik_base_domain: "{{ local_domain }}"
+homestack_traefik_base_path: "{{ appdata_path }}/traefik"
+homestack_error_pages_version: 2.27
+homestack_error_pages_theme: matrix
+
+homestack_nextcloud_uid: "{{ nextcloud_uid }}"
+homestack_nextcloud_gid: "{{ nextcloud_gid }}"
+homestack_output_path: "/home/docker/home-stack"
+homestack_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
+homestack_nextcloud_user: "{{ nextcloud_username }}"
+homestack_nextcloud_group: "{{ nextcloud_groupname }}"
+homestack_nextcloud_image_version: 29.0.10-apache
+homestack_nextcloud_mysql_path: "{{ appdata_path }}"
+homestack_nextcloud_base_domain: "{{ local_domain }}"
+
+homestack_monitoring_base_domain: "{{ local_domain }}"
+homestack_monitoring_prometheus_image_version: v2.55.1
+homestack_monitoring_prometheus_base_path: "{{ appdata_path }}/prometheus"
+homestack_monitoring_grafana_base_path: "{{ appdata_path }}/grafana"
+
+homestack_ha_active: true
+homestack_ha_base_domain: "{{ local_domain }}"
+homestack_ha_mosquitto_image_version: 2.0.20
+homestack_ha_mosquitto_base_path: "{{ appdata_path }}/mosquitto"
+homestack_ha_evcc_image_version: 0.133.0
+homestack_ha_evcc_base_path: "{{ appdata_path }}/evcc"
+
+homestack_backup: true
+homestack_backup_script_path: /usr/local/bin
 
 # dbrennand.autorestic
 autorestic_version: 1.8.3
@@ -282,11 +273,30 @@ autorestic_config:
       forget: prune
       hooks:
         before:
-          - "{{ backup_script_path }}/nextcloud_container_backup_before.sh"
+          - "{{ homestack_backup_script_path }}/nextcloud_container_backup_before.sh"
         success:
-          - "{{ backup_script_path }}/nextcloud_container_backup_success.sh"
+          - "{{ homestack_backup_script_path }}/nextcloud_container_backup_success.sh"
         failure:
-          - "{{ backup_script_path }}/nextcloud_container_backup_failure.sh"
+          - "{{ homestack_backup_script_path }}/nextcloud_container_backup_failure.sh"
+      options:
+        forget:
+          keep-daily: 7 # keep 4 last daily snapshots
+          keep-weekly: 8 # keep 1 last weekly snapshots
+          keep-monthly: 12 # keep 12 last monthly snapshots
+          keep-yearly: 7 # keep 7 last yearly snapshots
+          keep-within: '14d' # keep snapshots from the last 14 days
+    evcc:
+      cron: "15 1 * * *"
+      from: "{{ appdata_path }}/evcc/.zfs/snapshot/restic"
+      to: backblaze
+      forget: prune
+      hooks:
+        before:
+          - "{{ homestack_backup_script_path }}/evcc_container_backup_before.sh"
+        success:
+          - "{{ homestack_backup_script_path }}/evcc_container_backup_success.sh"
+        failure:
+          - "{{ homestack_backup_script_path }}/evcc_container_backup_failure.sh"
       options:
         forget:
           keep-daily: 7 # keep 4 last daily snapshots

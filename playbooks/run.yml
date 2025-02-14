@@ -22,7 +22,5 @@
       tags: docker_compose
     - role: monitoring
       tags: docker_compose
-    - role: backup
-      tags: backup
     - role: dbrennand.autorestic
       tags: backup
