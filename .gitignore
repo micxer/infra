@@ -62,3 +62,5 @@ TODO.md
 
 galaxy_roles
 .vault-password
+.ansible/
+ansible-lint.sarif
