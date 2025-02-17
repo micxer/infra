@@ -3,9 +3,9 @@ roles:
   - src: ironicbadger.bash_aliases
     version: "1.0.3"
   - src: grog.package
-    version: "v1.4.0"
+    version: "v1.4.1"
   - src: geerlingguy.docker
-    version: "7.4.1"
+    version: "7.4.5"
   - name: micxer.zfs
     version: "v1.0.1"
   - src: dbrennand.autorestic
@@ -15,6 +15,6 @@ roles:
 
 collections:
   - name: ansible.posix
-    version: "1.5.4"
+    version: "2.0.0"
   - name: prometheus.prometheus
-    version: "0.18.0"
+    version: "0.24.1"
