@@ -246,7 +246,9 @@ homestack_backup: true
 homestack_backup_script_path: /usr/local/bin
 
 # dbrennand.autorestic
+# renovate: datasource=github-releases depName=cupcakearmy/autorestic
 autorestic_version: 1.8.3
+# renovate: datasource=github-releases depName=restic/restic
 autorestic_restic_version: 0.17.3
 autorestic_config_file: /root/.autorestic.yml
 autorestic_config:
