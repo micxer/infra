@@ -219,11 +219,9 @@ zfs_monitoring_scrub_max_age: 8
 homestack_uid: "{{ docker_uid }}"
 homestack_gid: "{{ docker_gid }}"
 
-homestack_traefik_version: 2.11.16
 homestack_traefik_hostingde_domain: "{{ base_domain }}"
 homestack_traefik_base_domain: "{{ local_domain }}"
 homestack_traefik_base_path: "{{ appdata_path }}/traefik"
-homestack_error_pages_version: 2.27
 homestack_error_pages_theme: matrix
 
 homestack_nextcloud_uid: "{{ nextcloud_uid }}"
@@ -232,20 +230,16 @@ homestack_output_path: "/home/docker/home-stack"
 homestack_nextcloud_base_path: "{{ appdata_path }}/nextcloud"
 homestack_nextcloud_user: "{{ nextcloud_username }}"
 homestack_nextcloud_group: "{{ nextcloud_groupname }}"
-homestack_nextcloud_image_version: 29.0.10-apache
 homestack_nextcloud_mysql_path: "{{ appdata_path }}"
 homestack_nextcloud_base_domain: "{{ local_domain }}"
 
 homestack_monitoring_base_domain: "{{ local_domain }}"
-homestack_monitoring_prometheus_image_version: v2.55.1
 homestack_monitoring_prometheus_base_path: "{{ appdata_path }}/prometheus"
 homestack_monitoring_grafana_base_path: "{{ appdata_path }}/grafana"
 
 homestack_ha_active: true
 homestack_ha_base_domain: "{{ local_domain }}"
-homestack_ha_mosquitto_image_version: 2.0.20
 homestack_ha_mosquitto_base_path: "{{ appdata_path }}/mosquitto"
-homestack_ha_evcc_image_version: 0.133.0
 homestack_ha_evcc_base_path: "{{ appdata_path }}/evcc"
 
 homestack_backup: true
