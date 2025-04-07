@@ -241,7 +241,8 @@ homestack_ha_active: true
 homestack_ha_base_domain: "{{ local_domain }}"
 homestack_ha_mosquitto_base_path: "{{ appdata_path }}/mosquitto"
 homestack_ha_evcc_base_path: "{{ appdata_path }}/evcc"
-homestack_ha_evcc_grid_costs: 0.3602  # €/kWh
+homestack_ha_evcc_grid_costs: 0.3602
+homestack_ha_evcc_feedin_revenue: 0.082
 
 homestack_backup: true
 homestack_backup_script_path: /usr/local/bin
