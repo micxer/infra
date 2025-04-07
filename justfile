@@ -22,7 +22,8 @@ memoryalpha dry=default_dry: decrypt-ssh && encrypt-ssh
     ansible-playbook -b playbooks/run.yml --limit memoryalpha -vv {{ if dry == "dry" { " --check" } else { "" } }}
 
 docker-compose dry=default_dry: decrypt-ssh && encrypt-ssh
-    ansible-playbook -b playbooks/run.yml --limit memoryalpha --tags docker_compose $(if $(filter dry,$(MAKECMDGOALS)),--check) -v
+    echo {{ if dry == "dry" { "Doing a dry run for docker-compose..." } else { "Running docker-compose..." } }}
+    ansible-playbook -b playbooks/run.yml --limit memoryalpha --tags docker_compose {{ if dry == "dry" { "--check" } else { "" } }} -v
 
 reqs:
     echo "Installing dependencies..."
