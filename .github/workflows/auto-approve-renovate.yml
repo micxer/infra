@@ -1,0 +1,50 @@
+name: Auto Approve PR on Comment
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/approve')
+    
+    steps:
+      - name: Approve PR
+        uses: actions/github-script@v7
+        env:
+          # Configure allowed users as a comma-separated list, defaults to repository owner
+          ALLOWED_USERS: ${{ vars.APPROVE_ALLOWED_USERS || github.repository_owner }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { number } = context.issue;
+            const commenter = context.payload.comment.user.login;
+            
+            // Parse allowed users from environment variable
+            const allowedUsers = process.env.ALLOWED_USERS.split(',').map(user => user.trim());
+            
+            // Check if commenter is allowed
+            if (!allowedUsers.includes(commenter)) {
+              console.log(`User ${commenter} is not allowed to trigger auto-approval`);
+              core.setFailed(`User ${commenter} is not allowed to trigger auto-approval`);
+              return;
+            }
+            
+            try {
+              await github.rest.pulls.createReview({
+                owner,
+                repo,
+                pull_number: number,
+                event: 'APPROVE',
+                body: `Automatically approved via command from @${commenter}`
+              });
+              
+              console.log(`PR #${number} has been approved via command from ${commenter}`);
+            } catch (error) {
+              console.log(`Error approving PR: ${error}`);
+              core.setFailed(`Failed to approve PR: ${error.message}`);
+            }
