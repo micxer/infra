@@ -16,14 +16,37 @@ help:
 
 default_dry := ''
 
-memoryalpha dry=default_dry: decrypt-ssh && encrypt-ssh
+memoryalpha dry=default_dry: decrypt-ssh
+    #!/usr/bin/env sh
+    set -e
     echo {{ if dry == "dry" { "Doing a dry run..." } else { "Provisioning memoryalpha..." } }}
-    @export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES && \
-    ansible-playbook -b playbooks/run.yml --limit memoryalpha -vv {{ if dry == "dry" { " --check --diff" } else { "" } }}
 
-docker-compose dry=default_dry: decrypt-ssh && encrypt-ssh
+    # Run ansible and save exit code
+    ansible-playbook -b playbooks/run.yml --limit memoryalpha -vv {{ if dry == "dry" { " --check --diff" } else { "" } }} || ANSIBLE_EXIT_CODE=$?
+
+    # Always encrypt regardless of previous command result
+    just encrypt-ssh
+    
+    # If ansible failed, exit with its exit code
+    if [ -n "$ANSIBLE_EXIT_CODE" ]; then
+        exit $ANSIBLE_EXIT_CODE
+    fi
+
+docker-compose dry=default_dry: decrypt-ssh
+    #!/usr/bin/env sh
+    set -e
     echo {{ if dry == "dry" { "Doing a dry run for docker-compose..." } else { "Running docker-compose..." } }}
-    ansible-playbook -b playbooks/run.yml --limit memoryalpha --tags docker_compose {{ if dry == "dry" { "--check --diff" } else { "" } }} -v
+    
+    # Run ansible and save exit code
+    ansible-playbook -b playbooks/run.yml --limit memoryalpha --tags docker_compose {{ if dry == "dry" { "--check --diff" } else { "" } }} -v || ANSIBLE_EXIT_CODE=$?
+    
+    # Always encrypt regardless of previous command result
+    just encrypt-ssh
+    
+    # If ansible failed, exit with its exit code
+    if [ -n "$ANSIBLE_EXIT_CODE" ]; then
+        exit $ANSIBLE_EXIT_CODE
+    fi
 
 reqs:
     echo "Installing dependencies..."
@@ -38,7 +61,7 @@ decrypt-ssh:
 
 encrypt-ssh:
     echo "Encrypting values..."
-    ansible-vault encrypt memoryalpha.pem
+    git restore memoryalpha.pem
 
 decrypt:
     echo "Decrypting values..."
