@@ -289,11 +289,11 @@ autorestic_config:
       forget: prune
       hooks:
         before:
-          - "{{ homestack_backup_script_path }}/evcc_container_backup_before.sh"
+          - "{{ homestack_backup_script_path }}/evcc_container_backup.sh before"
         success:
-          - "{{ homestack_backup_script_path }}/evcc_container_backup_success.sh"
+          - "{{ homestack_backup_script_path }}/evcc_container_backup.sh success"
         failure:
-          - "{{ homestack_backup_script_path }}/evcc_container_backup_failure.sh"
+          - "{{ homestack_backup_script_path }}/evcc_container_backup.sh failure"
       options:
         forget:
           keep-daily: 7 # keep 4 last daily snapshots
