@@ -1,0 +1,18 @@
+{
+  "extends": ["config:base"],
+  "ansible": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["ansible-galaxy"],
+      "matchPackagePatterns": ["*"],
+      "matchPaths": ["requirements.yml"],
+      "automerge": true,
+      "automergeType": "pr",
+      "prPriority": 1
+    }
+  ],
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 5
+}
