@@ -222,7 +222,7 @@ homestack_gid: "{{ docker_gid }}"
 homestack_traefik_hostingde_domain: "{{ base_domain }}"
 homestack_traefik_base_domain: "{{ local_domain }}"
 homestack_traefik_base_path: "{{ appdata_path }}/traefik"
-homestack_error_pages_theme: matrix
+homestack_error_pages_theme: app-down
 
 homestack_nextcloud_uid: "{{ nextcloud_uid }}"
 homestack_nextcloud_gid: "{{ nextcloud_gid }}"
