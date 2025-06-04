@@ -65,11 +65,11 @@ encrypt-ssh:
 
 decrypt:
     echo "Decrypting values..."
-    ansible-vault decrypt memoryalpha.pem
+    ansible-vault decrypt vars/vault.yml
 
 encrypt:
     echo "Encrypting values..."
-    ansible-vault encrypt memoryalpha.pem
+    ansible-vault encrypt vars/vault.yml
 
 githook:
     @scripts/pre-commit.sh
