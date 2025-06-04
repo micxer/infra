@@ -108,7 +108,7 @@ zfs_filesystems:
     owner: "node-exp"
     group: "{{ docker_groupname }}"
     mountpoint: "{{ appdata_path }}/nc-db"
-    quota: 5G
+    quota: 6G
     primarycache: metadata
     snapdev: hidden
     snapdir: hidden
@@ -118,7 +118,7 @@ zfs_filesystems:
     owner: "node-exp"
     group: "{{ docker_groupname }}"
     mountpoint: "{{ appdata_path }}/nc-db/log"
-    quota: 1G
+    quota: 256M
     recordsize: 128k
     snapdev: hidden
     snapdir: hidden
@@ -128,7 +128,7 @@ zfs_filesystems:
     owner: "node-exp"
     group: "{{ docker_groupname }}"
     mountpoint: "{{ appdata_path }}/nc-db/data"
-    quota: 4G
+    quota: 5.5G
 #    logbias: throughput
     recordsize: 16k
     snapdev: hidden
