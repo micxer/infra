@@ -37,6 +37,7 @@ bash_aliases:
   - { alias: "dcnc", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-nextcloud.yml -p nextcloud-stack"}
   - { alias: "dcmon", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-monitoring.yml -p monitoring-stack"}
   - { alias: "dcha", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-ha.yml -p ha-stack"}
+  - { alias: "dcvw", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-vwsfriend.yml -p vwsfriend-stack"}
   - { alias: "dprune", command: "docker image prune"}
   - { alias: "dprunesys", command: "docker system prune --all"}
   - { alias: "ctop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
@@ -169,6 +170,13 @@ zfs_filesystems:
     snapdev: hidden
     snapdir: hidden
     state: present
+  - name: vwsfriend
+    pool: new-storage
+    logbias: latency
+    quota: 1G
+    snapdev: hidden
+    snapdir: hidden
+    state: present
   
   # - name: Shares/Movies
   #   compression: lz4
@@ -243,6 +251,13 @@ homestack_ha_mosquitto_base_path: "{{ appdata_path }}/mosquitto"
 homestack_ha_evcc_base_path: "{{ appdata_path }}/evcc"
 homestack_ha_evcc_grid_costs: 0.3602
 homestack_ha_evcc_feedin_revenue: 0.082
+
+homestack_vwsfriend_active: true
+homestack_vwsfriend_base_domain: "{{ local_domain }}"
+homestack_vwsfriend_base_path: "{{ appdata_path }}/vwsfriend"
+homestack_vwsfriend_db_user: vwsfriend
+homestack_vwsfriend_db_name: vwsfriend
+homestack_vwsfriend_weconnect_interval: 120
 
 homestack_backup: true
 homestack_backup_script_path: /usr/local/bin
