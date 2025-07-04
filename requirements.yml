@@ -9,7 +9,7 @@ roles:
   - name: micxer.zfs
     version: "v1.0.1"
   - src: dbrennand.autorestic
-    version: "2.2.0"
+    version: "2.3.0"
   - src: micxer.docker_compose_homestack
     version: "v2.8.0"
 
