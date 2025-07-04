@@ -1,16 +1,24 @@
 {
-  "extends": ["config:base"],
+  "extends": [
+    "config:recommended"
+  ],
   "ansible": {
     "enabled": true
   },
   "packageRules": [
     {
-      "matchManagers": ["ansible-galaxy"],
-      "matchPackagePatterns": ["*"],
-      "matchPaths": ["requirements.yml"],
+      "matchManagers": [
+        "ansible-galaxy"
+      ],
+      "matchFileNames": [
+        "requirements.yml"
+      ],
       "automerge": true,
       "automergeType": "pr",
-      "prPriority": 1
+      "prPriority": 1,
+      "matchPackageNames": [
+        "*"
+      ]
     }
   ],
   "prHourlyLimit": 2,
