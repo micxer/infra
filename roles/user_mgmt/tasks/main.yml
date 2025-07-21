@@ -2,7 +2,7 @@
 # Get unique list of groups to create on the server
 - name: Create list of groups
   ansible.builtin.set_fact:
-    groups_as_list: "{{ (groups_as_list | default([]) + item.groups) | map('trim') | sort | unique }}"
+    user_mgmt_groups_as_list: "{{ (user_mgmt_groups_as_list | default([]) + (item.groups | default([]))) | map('trim') | sort | unique }}"
   loop: "{{ users }}"
   when: item.groups is defined
   loop_control:
@@ -24,8 +24,8 @@
   ansible.builtin.group:
     name: "{{ item }}"
     state: present
-  when: groups_as_list is defined
-  loop: "{{ groups_as_list }}"
+  when: user_mgmt_groups_as_list is defined
+  loop: "{{ user_mgmt_groups_as_list }}"
   loop_control:
     label: "groups: {{ item }}"
 
