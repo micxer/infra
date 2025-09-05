@@ -280,7 +280,7 @@ autorestic_config:
         AWS_SECRET_ACCESS_KEY: "{{ autorestic_AWS_SECRET_ACCESS_KEY }}"
   locations:
     nextcloud:
-      cron: "15 1 * * *"
+      cron: "20 1 * * *"
       from: "{{ appdata_path }}/nextcloud/.zfs/snapshot/restic"
       to: backblaze
       forget: prune
@@ -299,7 +299,7 @@ autorestic_config:
           keep-yearly: 7 # keep 7 last yearly snapshots
           keep-within: '14d' # keep snapshots from the last 14 days
     evcc:
-      cron: "15 1 * * *"
+      cron: "10 1 * * *"
       from: "{{ appdata_path }}/evcc/.zfs/snapshot/restic"
       to: backblaze
       forget: prune
@@ -310,6 +310,25 @@ autorestic_config:
           - "{{ homestack_backup_script_path }}/evcc_container_backup.sh success"
         failure:
           - "{{ homestack_backup_script_path }}/evcc_container_backup.sh failure"
+      options:
+        forget:
+          keep-daily: 7 # keep 4 last daily snapshots
+          keep-weekly: 8 # keep 1 last weekly snapshots
+          keep-monthly: 12 # keep 12 last monthly snapshots
+          keep-yearly: 7 # keep 7 last yearly snapshots
+          keep-within: '14d' # keep snapshots from the last 14 days
+    vwsfriend:
+      cron: "15 1 * * *"
+      from: "{{ appdata_path }}/vwsfriend/.zfs/snapshot/restic"
+      to: backblaze
+      forget: prune
+      hooks:
+        before:
+          - "{{ homestack_backup_script_path }}/vwsfriend_container_backup.sh before"
+        success:
+          - "{{ homestack_backup_script_path }}/vwsfriend_container_backup.sh success"
+        failure:
+          - "{{ homestack_backup_script_path }}/vwsfriend_container_backup.sh failure"
       options:
         forget:
           keep-daily: 7 # keep 4 last daily snapshots
