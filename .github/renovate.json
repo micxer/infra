@@ -12,10 +12,11 @@
   "ansible": {
     "enabled": true
   },
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": [
-        "host_vars/.*\\.ya?ml$"
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/host_vars/.*\\.ya?ml$/"
       ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.*?_version: (?<currentValue>.*)$"
@@ -41,7 +42,7 @@
     },
     {
       "matchManagers": [
-        "regex"
+        "custom.regex"
       ],
       "matchFileNames": [
         "host_vars/memoryalpha"
