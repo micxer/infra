@@ -1,11 +1,15 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
+  "dependencyDashboard": true,
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    "config:best-practices"
   ],
   "ansible": {
-    "enabled": true
-  },
-  "regex": {
     "enabled": true
   },
   "regexManagers": [
