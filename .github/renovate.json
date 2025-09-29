@@ -5,6 +5,21 @@
   "ansible": {
     "enabled": true
   },
+  "regex": {
+    "enabled": true
+  },
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "host_vars/.*\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.*?_version: (?<currentValue>.*)$"
+      ],
+      "datasourceTemplate": "{{datasource}}",
+      "depNameTemplate": "{{depName}}"
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": [
@@ -19,6 +34,17 @@
       "matchPackageNames": [
         "*"
       ]
+    },
+    {
+      "matchManagers": [
+        "regex"
+      ],
+      "matchFileNames": [
+        "host_vars/memoryalpha"
+      ],
+      "automerge": true,
+      "automergeType": "pr",
+      "prPriority": 2
     }
   ],
   "prHourlyLimit": 2,
