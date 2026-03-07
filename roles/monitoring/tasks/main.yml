@@ -1,3 +1,4 @@
+---
 - name: Monitoring | Copy grafana dashboard files
   ansible.builtin.copy:
     src: "grafana/{{ item.src }}"
