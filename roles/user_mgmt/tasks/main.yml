@@ -49,6 +49,7 @@
     label: >-
       username: {{ item.username }}, user_state: {{ item.user_state }}, password: {{ 'True' if item.password is defined else 'False' }},
       primarygroup: {{ item.primarygroup if item.primarygroup is defined else '' }}, groups: {{ item.groups if item.groups is defined else '' }}
+  no_log: true
 
 - name: Add SSH keys for users
   ansible.posix.authorized_key:
