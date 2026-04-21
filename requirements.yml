@@ -11,7 +11,7 @@ roles:
   - src: dbrennand.autorestic
     version: "2.3.0"
   - src: micxer.docker_compose_homestack
-    version: "v3.0.22"
+    version: "v3.0.37"
 
 collections:
   - name: ansible.posix
