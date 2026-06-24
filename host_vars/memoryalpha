@@ -166,14 +166,14 @@ zfs_filesystems:
   - name: evcc
     pool: new-storage
     logbias: latency
-    quota: 64M
+    quota: 256M
     snapdev: hidden
     snapdir: hidden
     state: present
   - name: vwsfriend
     pool: new-storage
     logbias: latency
-    quota: 1G
+    quota: 2G
     snapdev: hidden
     snapdir: hidden
     state: present
