@@ -98,7 +98,7 @@ zfs_filesystems:
     mountpoint: "{{ appdata_path }}/nextcloud"
     # latency (default) | throughput
     logbias: latency
-    quota: 1T
+    quota: 2T
     # Controls whether the snapshots devices of zvol's are hidden or visible. hidden (default) | visible
     snapdev: hidden
     # Controls whether the .zfs directory is hidden or visible in the root of the file system. hidden (default) | visible
@@ -109,7 +109,7 @@ zfs_filesystems:
     owner: "node-exp"
     group: "{{ docker_groupname }}"
     mountpoint: "{{ appdata_path }}/nc-db"
-    quota: 10G
+    quota: 25G
     primarycache: metadata
     snapdev: hidden
     snapdir: hidden
