@@ -259,6 +259,8 @@ homestack_vwsfriend_db_user: vwsfriend
 homestack_vwsfriend_db_name: vwsfriend
 homestack_vwsfriend_weconnect_interval: 120
 
+homestack_git_base_path: "{{ appdata_path }}/forgejo"
+
 homestack_backup: true
 homestack_backup_script_path: /usr/local/bin
 
@@ -336,6 +338,18 @@ autorestic_config:
           keep-monthly: 12 # keep 12 last monthly snapshots
           keep-yearly: 7 # keep 7 last yearly snapshots
           keep-within: '14d' # keep snapshots from the last 14 days
+    forgejo:
+      cron: "25 1 * * *"
+      from: "{{ homestack_git_base_path }}/.zfs/snapshot/restic"
+      to: backblaze
+      forget: prune
+      options:
+        forget:
+          keep-daily: 7
+          keep-weekly: 8
+          keep-monthly: 12
+          keep-yearly: 7
+          keep-within: '14d'
 autorestic_info: true
 autorestic_check: false  # snapshot directory doesn't exist yet
 autorestic_cron: true
