@@ -38,6 +38,7 @@ bash_aliases:
   - { alias: "dcmon", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-monitoring.yml -p monitoring-stack"}
   - { alias: "dcha", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-ha.yml -p ha-stack"}
   - { alias: "dcvw", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-vwsfriend.yml -p vwsfriend-stack"}
+  - { alias: "dcgit", command: "docker-compose -f {{ homestack_output_path }}/docker-compose-git.yml -p git-stack"}
   - { alias: "dprune", command: "docker image prune"}
   - { alias: "dprunesys", command: "docker system prune --all"}
   - { alias: "ctop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
@@ -177,6 +178,13 @@ zfs_filesystems:
     snapdev: hidden
     snapdir: hidden
     state: present
+  - name: forgejo
+    pool: new-storage
+    logbias: latency
+    quota: 1073741824  # 1G
+    snapdev: hidden
+    snapdir: hidden
+    state: present
   
   # - name: Shares/Movies
   #   compression: lz4
@@ -241,6 +249,7 @@ homestack_nextcloud_group: "{{ nextcloud_groupname }}"
 homestack_nextcloud_mysql_path: "{{ appdata_path }}"
 homestack_nextcloud_base_domain: "{{ local_domain }}"
 
+homestack_monitoring_active: true
 homestack_monitoring_base_domain: "{{ local_domain }}"
 homestack_monitoring_prometheus_base_path: "{{ appdata_path }}/prometheus"
 homestack_monitoring_grafana_base_path: "{{ appdata_path }}/grafana"
@@ -258,6 +267,19 @@ homestack_vwsfriend_base_path: "{{ appdata_path }}/vwsfriend"
 homestack_vwsfriend_db_user: vwsfriend
 homestack_vwsfriend_db_name: vwsfriend
 homestack_vwsfriend_weconnect_interval: 120
+
+homestack_git_active: true
+homestack_git_base_domain: "{{ local_domain }}"
+homestack_git_base_path: "{{ appdata_path }}/forgejo"
+homestack_git_repo_indexer_enabled: true
+
+homestack_git_mailer_host: ""
+homestack_git_mailer_port: 587  # SMTP port (587 for STARTTLS, 465 for SMTPS, 25 for plain)
+homestack_git_mailer_from: ""
+homestack_git_mailer_user: ""
+homestack_git_mailer_password: ""
+
+homestack_git_forgejo_image_version: 16-rootless
 
 homestack_backup: true
 homestack_backup_script_path: /usr/local/bin
@@ -336,6 +358,25 @@ autorestic_config:
           keep-monthly: 12 # keep 12 last monthly snapshots
           keep-yearly: 7 # keep 7 last yearly snapshots
           keep-within: '14d' # keep snapshots from the last 14 days
+    forgejo:
+      cron: "25 1 * * *"
+      from: "{{ homestack_git_base_path }}/.zfs/snapshot/restic"
+      to: backblaze
+      forget: prune
+      hooks:
+        before:
+          - "{{ homestack_backup_script_path }}/forgejo_container_backup.sh before"
+        success:
+          - "{{ homestack_backup_script_path }}/forgejo_container_backup.sh success"
+        failure:
+          - "{{ homestack_backup_script_path }}/forgejo_container_backup.sh failure"
+      options:
+        forget:
+          keep-daily: 7
+          keep-weekly: 8
+          keep-monthly: 12
+          keep-yearly: 7
+          keep-within: '14d'
 autorestic_info: true
 autorestic_check: false  # snapshot directory doesn't exist yet
 autorestic_cron: true
