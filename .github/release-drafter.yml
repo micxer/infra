@@ -26,6 +26,7 @@ autolabeler:
   - label: 'enhancement'
     branch:
       - '/feature\/.+/'
+      - '/feat\/.+/'
     title:
       - '/add.+/i'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
