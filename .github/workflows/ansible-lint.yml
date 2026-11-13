@@ -19,7 +19,7 @@ jobs:
           chmod 600 .vault-password
 
       - name: Lint Ansible Playbook
-        uses: ansible/ansible-lint@9bce2bfb8f4a984e6b13767bc0d6bf0a49492164 # v26
+        uses: ansible/ansible-lint@b74fb6f73d234bf92672372cb1c10768e4018d16 # v26
         env:
           UV_CONSTRAINT: .github/ansible-lint-constraints.txt
 
